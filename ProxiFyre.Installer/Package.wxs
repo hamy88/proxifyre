@@ -25,10 +25,12 @@
       UpgradeCode="{309431B2-9478-43FE-8CB6-EB289306C64C}"
       Scope="perMachine"
       InstallerVersion="500"
+      Codepage="936"
       Compressed="yes"
       UpgradeStrategy="majorUpgrade">
 
     <SummaryInformation
+        Codepage="936"
         Description="ProxiFyre 每计算机安装程序"
         Comments="安装架构特定的 ProxiFyre 引擎和管理界面。" />
 
