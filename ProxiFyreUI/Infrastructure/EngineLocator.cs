@@ -216,8 +216,8 @@ namespace ProxiFyreUI.Infrastructure
             }
 
             return new EngineLocation(null, EngineLocationSource.None,
-                "受保护的每计算机位置中没有可用于" +
-                "运行特权服务卸载命令的有效 ProxiFyre.exe。");
+                "受保护的每计算机位置中没有有效的 ProxiFyre.exe " +
+                "可用于运行特权服务卸载命令。");
         }
 
         public string GetRegisteredServiceImagePath()

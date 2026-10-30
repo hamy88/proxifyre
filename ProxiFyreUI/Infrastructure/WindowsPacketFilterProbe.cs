@@ -222,8 +222,8 @@ namespace ProxiFyreUI.Infrastructure
         private static string FormatApiVersion(uint driverVersion, ushort apiMajor,
             ushort apiMinor)
         {
-            return "API encoding " + FormatApiEncoding(driverVersion) + " (API major " +
-                   apiMajor + ", API minor " + FormatApiMinor(apiMinor) + ")";
+            return "API encoding " + FormatApiEncoding(driverVersion) + " (API 主版本 " +
+                   apiMajor + ", API 次版本 " + FormatApiMinor(apiMinor) + ")";
         }
 
         private static string FormatApiEncoding(uint driverVersion)

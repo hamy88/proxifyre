@@ -40,9 +40,9 @@ namespace ProxiFyre.Tests
             });
         }
 
-        [TestCase(0x06012000u, "API major 2")]
-        [TestCase(0x06014000u, "API major 4")]
-        [TestCase(0xFFFFFFFFu, "API major 15")]
+        [TestCase(0x06012000u, "API 主版本 2")]
+        [TestCase(0x06014000u, "API 主版本 4")]
+        [TestCase(0xFFFFFFFFu, "API 主版本 15")]
         public void DifferentApiMajorIsRejectedEvenWhenEncodingIsNewer(uint driverVersion,
             string reportedMajor)
         {
@@ -81,7 +81,7 @@ namespace ProxiFyre.Tests
             Assert.Multiple(() =>
             {
                 Assert.That(status.IsAvailable, Is.False);
-                Assert.That(status.Details, Does.Contain("API major 4"));
+                Assert.That(status.Details, Does.Contain("API 主版本 4"));
                 Assert.That(status.StartupMessage, Does.Contain("不可用或不兼容"));
             });
         }
