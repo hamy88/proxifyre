@@ -29,8 +29,8 @@
       UpgradeStrategy="majorUpgrade">
 
     <SummaryInformation
-        Description="ProxiFyre per-machine installer"
-        Comments="Installs the architecture-specific ProxiFyre engine and management UI." />
+        Description="ProxiFyre 每计算机安装程序"
+        Comments="安装架构特定的 ProxiFyre 引擎和管理界面。" />
 
     <MajorUpgrade
         AllowDowngrades="no"
@@ -180,7 +180,7 @@
               Id="ProxiFyreServiceInstall"
               Name="ProxiFyreService"
               DisplayName="ProxiFyre Service"
-              Description="Routes selected Windows applications through configured SOCKS5 proxies."
+              Description="通过配置的 SOCKS5 代理路由选定的 Windows 应用程序。"
               Type="ownProcess"
               Start="demand"
               ErrorControl="normal"
@@ -198,7 +198,7 @@
           <firewall:FirewallException
               Id="ProxiFyreInboundTcpFirewallRule"
               Name="ProxiFyre (TCP-In)"
-              Description="Allows TCP flows redirected by Windows Packet Filter to the local ProxiFyre engine."
+              Description="允许 Windows Packet Filter 重定向到本地 ProxiFyre 引擎的 TCP 流量。"
               File="ProxiFyreEngineFile"
               Protocol="tcp"
               Profile="all"
@@ -209,7 +209,7 @@
           <firewall:FirewallException
               Id="ProxiFyreInboundUdpFirewallRule"
               Name="ProxiFyre (UDP-In)"
-              Description="Allows UDP flows redirected by Windows Packet Filter to the local ProxiFyre engine."
+              Description="允许 Windows Packet Filter 重定向到本地 ProxiFyre 引擎的 UDP 流量。"
               File="ProxiFyreEngineFile"
               Protocol="udp"
               Profile="all"
@@ -261,7 +261,7 @@
         <Shortcut
             Id="ProxiFyreStartMenuShortcut"
             Name="ProxiFyre"
-            Description="Configure and manage ProxiFyre"
+            Description="配置和管理 ProxiFyre"
             Target="[ProxiFyreInstallFolder]ProxiFyreUI.exe"
             WorkingDirectory="ProxiFyreInstallFolder"
             Advertise="no"
@@ -285,7 +285,7 @@
         <Shortcut
             Id="ProxiFyreDesktopShortcut"
             Name="ProxiFyre"
-            Description="Configure and manage ProxiFyre"
+            Description="配置和管理 ProxiFyre"
             Target="[ProxiFyreInstallFolder]ProxiFyreUI.exe"
             WorkingDirectory="ProxiFyreInstallFolder"
             Advertise="no"
@@ -304,15 +304,15 @@
     <Feature
         Id="CoreFeature"
         Title="ProxiFyre"
-        Description="ProxiFyre engine, service, management UI, and Start menu shortcut"
+        Description="ProxiFyre 引擎、服务、管理界面和开始菜单快捷方式"
         Display="expand"
         Level="1"
         AllowAbsent="no"
         AllowAdvertise="no">
       <Feature
           Id="DesktopShortcutFeature"
-          Title="Desktop shortcut"
-          Description="Create a ProxiFyre shortcut on the shared desktop"
+          Title="桌面快捷方式"
+          Description="在共享桌面上创建 ProxiFyre 快捷方式"
           Level="1"
           AllowAdvertise="no" />
     </Feature>

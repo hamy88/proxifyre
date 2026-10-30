@@ -57,14 +57,14 @@ namespace ProxiFyreUI.Infrastructure
             foreach (var path in paths)
             {
                 if (string.IsNullOrWhiteSpace(path))
-                    throw new FileNotFoundException("A required payload path is missing.");
+                    throw new FileNotFoundException("缺少必需的负载路径。");
                 var fullPath = Path.GetFullPath(path);
                 if (seen.Add(fullPath))
                     verifiedPaths.Add(fullPath);
             }
 
             if (verifiedPaths.Count == 0)
-                throw new FileNotFoundException("No required payload files were supplied.");
+                throw new FileNotFoundException("未提供必需的负载文件。");
 
             var streams = new List<FileStream>();
             var directoryHandles = new List<SafeFileHandle>();
@@ -82,7 +82,7 @@ namespace ProxiFyreUI.Infrastructure
                     if (!validator(path))
                     {
                         throw new FileNotFoundException(
-                            "A required payload file changed or does not have the expected integrity.",
+                            "必需的负载文件已更改或完整性不符合预期。",
                             path);
                     }
                 }
@@ -103,18 +103,18 @@ namespace ProxiFyreUI.Infrastructure
             ISet<string> leasedDirectories, ICollection<SafeFileHandle> handles)
         {
             if (string.IsNullOrWhiteSpace(directory))
-                throw new IOException("A required payload directory is unavailable.");
+                throw new IOException("必需的负载目录不可用。");
 
             var fullDirectory = Path.GetFullPath(directory);
             var root = Path.GetPathRoot(fullDirectory);
             if (string.IsNullOrWhiteSpace(root) || root.Length != 3 || root[1] != ':' ||
                 GetDriveType(root) != DriveFixed)
-                throw new IOException("A required payload directory is not on a fixed local volume.");
+                throw new IOException("必需的负载目录不在固定本地卷上。");
 
             var volumeName = new StringBuilder(64);
             if (!GetVolumeNameForVolumeMountPoint(root, volumeName, volumeName.Capacity) ||
                 !IsRegisteredVolumeRoot(root, volumeName.ToString()))
-                throw new IOException("A required payload volume cannot be pinned safely.");
+                throw new IOException("无法安全地固定必需的负载卷。");
             if (fullDirectory.Length > root.Length)
             {
                 fullDirectory = fullDirectory.TrimEnd(Path.DirectorySeparatorChar,
@@ -140,7 +140,7 @@ namespace ProxiFyreUI.Infrastructure
                     var error = Marshal.GetLastWin32Error();
                     handle.Dispose();
                     throw new Win32Exception(error,
-                        "A required payload directory could not be locked: '" + current + "'.");
+                        "无法锁定必需的负载目录：'" + current + "'。");
                 }
 
                 ByHandleFileInformation information;
@@ -149,14 +149,14 @@ namespace ProxiFyreUI.Infrastructure
                     var error = Marshal.GetLastWin32Error();
                     handle.Dispose();
                     throw new Win32Exception(error,
-                        "A required payload directory could not be inspected: '" + current + "'.");
+                        "无法检查必需的负载目录：'" + current + "'。");
                 }
                 if ((information.FileAttributes & FileAttributeDirectory) == 0 ||
                     (information.FileAttributes & FileAttributeReparsePoint) != 0)
                 {
                     handle.Dispose();
                     throw new IOException(
-                        "A required payload directory is not a normal directory: '" + current + "'.");
+                        "必需的负载目录不是正常目录：'" + current + "'。");
                 }
 
                 handles.Add(handle);
@@ -216,7 +216,7 @@ namespace ProxiFyreUI.Infrastructure
                 var error = Marshal.GetLastWin32Error();
                 handle.Dispose();
                 throw new Win32Exception(error,
-                    "A required payload file could not be locked: '" + path + "'.");
+                    "无法锁定必需的负载文件：'" + path + "'。");
             }
 
             try
@@ -224,10 +224,10 @@ namespace ProxiFyreUI.Infrastructure
                 ByHandleFileInformation information;
                 if (!GetFileInformationByHandle(handle, out information))
                     throw new Win32Exception(Marshal.GetLastWin32Error(),
-                        "A required payload file could not be inspected: '" + path + "'.");
+                        "无法检查必需的负载文件：'" + path + "'。");
                 if ((information.FileAttributes &
                      (FileAttributeDirectory | FileAttributeReparsePoint)) != 0)
-                    throw new IOException("A required payload file is not a normal file: '" + path + "'.");
+                    throw new IOException("必需的负载文件不是正常文件：'" + path + "'。");
 
                 return new FileStream(handle, FileAccess.Read);
             }
@@ -340,11 +340,11 @@ namespace ProxiFyreUI.Infrastructure
             return null;
 #else
             if (string.IsNullOrWhiteSpace(userInterfacePath))
-                throw new FileNotFoundException("The ProxiFyre UI executable path is unavailable.");
+                throw new FileNotFoundException("ProxiFyre UI 可执行文件路径不可用。");
             var fullUiPath = Path.GetFullPath(userInterfacePath);
             var directory = Path.GetDirectoryName(fullUiPath);
             if (string.IsNullOrWhiteSpace(directory))
-                throw new FileNotFoundException("The ProxiFyre UI directory is unavailable.");
+                throw new FileNotFoundException("ProxiFyre UI 目录不可用。");
 
             return LifecycleExecutableLease.Acquire(
                 GetStartupPayloadPaths(fullUiPath), IsTrustedUiPayloadFile);
@@ -356,7 +356,7 @@ namespace ProxiFyreUI.Infrastructure
             var fullUiPath = Path.GetFullPath(userInterfacePath);
             var directory = Path.GetDirectoryName(fullUiPath);
             if (string.IsNullOrWhiteSpace(directory))
-                throw new ArgumentException("The UI executable must have a directory.",
+                throw new ArgumentException("UI 可执行文件必须位于某个目录中。",
                     nameof(userInterfacePath));
 
             return new[]

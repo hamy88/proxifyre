@@ -43,7 +43,7 @@ namespace ProxiFyreUI.Forms
 
         private async Task LoadProcessesAsync()
         {
-            SetLoading(true, "Enumerating running processes…");
+            SetLoading(true, "正在枚举运行中的进程…");
             try
             {
                 _entries = await _processCatalog.GetProcessesAsync(_cancellation.Token);
@@ -56,13 +56,13 @@ namespace ProxiFyreUI.Forms
             catch (Exception)
             {
                 if (!IsDisposed)
-                    MessageBox.Show(this, "Running processes could not be enumerated. Try again or add the application manually.",
+                    MessageBox.Show(this, "无法枚举运行中的进程。请重试，或手动添加应用程序。",
                         "ProxiFyre UI", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
                 if (!IsDisposed)
-                    SetLoading(false, $"{_entries.Count} process(es) available. Inaccessible paths are still listed by name.");
+                    SetLoading(false, $"有 {_entries.Count} 个进程可用。不可访问的路径仍会按名称列出。");
             }
         }
 

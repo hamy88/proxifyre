@@ -61,11 +61,11 @@ namespace ProxiFyreUI.Forms
             _unsupportedProtocols = (rule.SupportedProtocols ?? new List<string>())
                 .Where(value => !string.Equals(value, "TCP", StringComparison.OrdinalIgnoreCase) &&
                                 !string.Equals(value, "UDP", StringComparison.OrdinalIgnoreCase))
-                .Select(value => value ?? "<null>").ToArray();
+                .Select(value => value ?? "<空>").ToArray();
             _unsupportedAddressFamilies = (rule.SupportedAddressFamilies ?? new List<string>())
                 .Where(value => !string.Equals(value, "IPv4", StringComparison.OrdinalIgnoreCase) &&
                                 !string.Equals(value, "IPv6", StringComparison.OrdinalIgnoreCase))
-                .Select(value => value ?? "<null>").ToArray();
+                .Select(value => value ?? "<空>").ToArray();
             tcpCheckBox.Checked = rule.SupportedProtocols == null ||
                                   rule.SupportedProtocols.Any(value => string.Equals(value, "TCP", StringComparison.OrdinalIgnoreCase));
             udpCheckBox.Checked = rule.SupportedProtocols == null ||
@@ -81,7 +81,7 @@ namespace ProxiFyreUI.Forms
             }
             else
             {
-                transportComboBox.Items.Add("Unsupported value: " + rule.Socks5Transport);
+                transportComboBox.Items.Add("不支持的值：" + rule.Socks5Transport);
                 transportComboBox.SelectedIndex = 2;
             }
             tlsServerNameTextBox.Text = rule.TlsServerName ?? string.Empty;
@@ -133,7 +133,7 @@ namespace ProxiFyreUI.Forms
             var host = hostTextBox.Text.Trim();
             if (host.Length == 0)
             {
-                errorProvider.SetError(hostTextBox, "Enter the upstream SOCKS5 host.");
+                errorProvider.SetError(hostTextBox, "请输入上游 SOCKS5 主机。");
                 blocking = true;
             }
             else
@@ -141,12 +141,12 @@ namespace ProxiFyreUI.Forms
                 IPAddress address;
                 if (IPAddress.TryParse(host.Trim('[', ']'), out address) && address.AddressFamily == AddressFamily.InterNetworkV6)
                 {
-                    errorProvider.SetError(hostTextBox, "The current engine requires an IPv4 upstream endpoint. IPv6 literals are not supported.");
+                    errorProvider.SetError(hostTextBox, "当前引擎要求 IPv4 上游端点，不支持 IPv6 字面量。");
                     blocking = true;
                 }
                 if (host.Contains(":") || host.Contains("/") || host.Contains("\\"))
                 {
-                    errorProvider.SetError(hostTextBox, "Enter an IPv4 literal or hostname without a scheme or path.");
+                    errorProvider.SetError(hostTextBox, "请输入不含协议或路径的 IPv4 字面量或主机名。");
                     blocking = true;
                 }
             }
@@ -155,7 +155,7 @@ namespace ProxiFyreUI.Forms
             var hasPassword = !string.IsNullOrEmpty(passwordTextBox.Text);
             if (hasUsername != hasPassword)
             {
-                var message = "Username and password must either both be entered or both be empty.";
+                var message = "用户名和密码必须同时填写或同时留空。";
                 errorProvider.SetError(usernameTextBox, message);
                 errorProvider.SetError(passwordTextBox, message);
                 blocking = true;
@@ -163,36 +163,36 @@ namespace ProxiFyreUI.Forms
 
             if (!tcpCheckBox.Checked && !udpCheckBox.Checked)
             {
-                errorProvider.SetError(udpCheckBox, "Select at least one traffic protocol.");
+                errorProvider.SetError(udpCheckBox, "请至少选择一种流量协议。");
                 blocking = true;
             }
             if (_unsupportedProtocols.Length > 0)
             {
                 errorProvider.SetError(udpCheckBox,
-                    "Unsupported protocol value(s): " + string.Join(", ", _unsupportedProtocols) +
-                    ". Change a protocol checkbox to replace them with canonical values.");
-                warnings.Add("Error: Unsupported protocol value(s): " + string.Join(", ", _unsupportedProtocols) + ".");
+                    "不支持的协议值：" + string.Join("、", _unsupportedProtocols) +
+                    "。请更改协议复选框以替换为规范值。");
+                warnings.Add("错误：不支持的协议值：" + string.Join("、", _unsupportedProtocols) + "。");
                 blocking = true;
             }
             if (!ipv4CheckBox.Checked && !ipv6CheckBox.Checked)
             {
-                errorProvider.SetError(ipv6CheckBox, "Select at least one destination address family.");
+                errorProvider.SetError(ipv6CheckBox, "请至少选择一种目标地址族。");
                 blocking = true;
             }
             if (_unsupportedAddressFamilies.Length > 0)
             {
                 errorProvider.SetError(ipv6CheckBox,
-                    "Unsupported address-family value(s): " + string.Join(", ", _unsupportedAddressFamilies) +
-                    ". Change an address-family checkbox to replace them with canonical values.");
-                warnings.Add("Error: Unsupported address-family value(s): " +
-                    string.Join(", ", _unsupportedAddressFamilies) + ".");
+                    "不支持的地址族值：" + string.Join("、", _unsupportedAddressFamilies) +
+                    "。请更改地址族复选框以替换为规范值。");
+                warnings.Add("错误：不支持的地址族值：" +
+                    string.Join("、", _unsupportedAddressFamilies) + "。");
                 blocking = true;
             }
 
             if (transportComboBox.SelectedIndex != 0 && transportComboBox.SelectedIndex != 1)
             {
-                errorProvider.SetError(transportComboBox, "Choose TCP or TLS to replace the unsupported transport value.");
-                warnings.Add("Error: The loaded SOCKS5 transport value is unsupported; choose TCP or TLS.");
+                errorProvider.SetError(transportComboBox, "请选择 TCP 或 TLS，以替换不支持的传输值。");
+                warnings.Add("错误：加载的 SOCKS5 传输值不受支持；请选择 TCP 或 TLS。");
                 blocking = true;
             }
 
@@ -200,7 +200,7 @@ namespace ProxiFyreUI.Forms
             if (transportComboBox.SelectedIndex == 1 && normalizedPin.Length > 0 &&
                 (normalizedPin.Length != 64 || normalizedPin.Any(character => !Uri.IsHexDigit(character))))
             {
-                errorProvider.SetError(tlsPinTextBox, "A certificate pin must contain exactly 64 hexadecimal SHA-256 characters.");
+                errorProvider.SetError(tlsPinTextBox, "证书固定值必须恰好包含 64 个十六进制 SHA-256 字符。");
                 blocking = true;
             }
 
@@ -208,7 +208,7 @@ namespace ProxiFyreUI.Forms
             {
                 var validation = _validator.ValidateRule(BuildCandidate(), _ruleIndex);
                 blocking |= validation.HasErrors;
-                warnings.AddRange(validation.Issues.Select(issue => issue.Severity + ": " + issue.Message));
+                warnings.AddRange(validation.Issues.Select(issue => issue.Message));
 
                 var usernameLengthIssue = validation.Issues.FirstOrDefault(
                     issue => issue.Code == "AUTH_USERNAME_TOO_LONG");
@@ -223,20 +223,20 @@ namespace ProxiFyreUI.Forms
             catch (Exception)
             {
                 blocking = true;
-                warnings.Add("Error: Rule validation could not be completed. Review the entered values.");
+                warnings.Add("错误：无法完成规则验证。请检查输入的值。");
             }
 
             if (catchAllCheckBox.Checked && _ruleIndex < _ruleCount - 1)
-                warnings.Add("Warning: This catch-all rule is not last and will shadow all later rules.");
+                warnings.Add("警告：此兜底规则不在最后，将屏蔽之后的所有规则。");
             if (catchAllCheckBox.Checked && applicationsListBox.Items.Count > 0)
-                warnings.Add("Warning: Named application entries in a catch-all rule are redundant because the empty match reaches every remaining application.");
+                warnings.Add("警告：兜底规则中的具名应用程序条目是多余的，因为空匹配会覆盖所有剩余应用程序。");
             if (allowInvalidCertificateCheckBox.Checked)
                 warnings.Add(string.IsNullOrWhiteSpace(normalizedPin)
-                    ? "SECURITY WARNING: Normal certificate validation is disabled and no certificate pin authenticates the server."
-                    : "SECURITY WARNING: Normal certificate validation is disabled; the configured certificate pin must be trusted explicitly.");
+                    ? "安全警告：已禁用正常证书验证，且没有证书固定值来认证服务器。"
+                    : "安全警告：已禁用正常证书验证；必须明确信任已配置的证书固定值。");
 
             validationLabel.Text = warnings.Count == 0
-                ? "Rule is valid. No network connection is attempted during validation."
+                ? "规则有效。验证期间不会尝试建立网络连接。"
                 : string.Join(Environment.NewLine, warnings.Distinct());
             validationLabel.ForeColor = blocking || allowInvalidCertificateCheckBox.Checked
                 ? System.Drawing.Color.DarkRed
@@ -274,8 +274,8 @@ namespace ProxiFyreUI.Forms
 
         private void AddManualButton_Click(object sender, EventArgs e)
         {
-            using (var dialog = new InputDialog("Add application match",
-                "Enter an executable name or full/path substring. The value is preserved exactly:"))
+            using (var dialog = new InputDialog("添加应用程序匹配项",
+                "输入可执行文件名称或完整/路径子串。该值会原样保留："))
             {
                 if (dialog.ShowDialog(this) == DialogResult.OK)
                     AddApplications(new[] { dialog.Value });
@@ -304,8 +304,8 @@ namespace ProxiFyreUI.Forms
         {
             return new OpenFileDialog
             {
-                Title = "Select application executable",
-                Filter = "Executable files (*.exe)|*.exe|All files (*.*)|*.*",
+                Title = "选择应用程序可执行文件",
+                Filter = "可执行文件 (*.exe)|*.exe|所有文件 (*.*)|*.*",
                 Multiselect = true,
                 CheckFileExists = true
             };
@@ -357,10 +357,10 @@ namespace ProxiFyreUI.Forms
                 return;
 
             var result = MessageBox.Show(this,
-                "Allowing invalid certificates disables normal certificate chain and hostname validation. " +
-                "Without a SHA-256 certificate pin, the upstream server is not authenticated.\r\n\r\n" +
-                "Enable this unsafe option?",
-                "Security warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
+                "允许无效证书会禁用正常的证书链和主机名验证。" +
+                "没有 SHA-256 证书固定值时，上游服务器将无法被认证。\r\n\r\n" +
+                "是否启用这个不安全的选项？",
+                "安全警告", MessageBoxButtons.YesNo, MessageBoxIcon.Warning,
                 MessageBoxDefaultButton.Button2);
             if (result != DialogResult.Yes)
             {

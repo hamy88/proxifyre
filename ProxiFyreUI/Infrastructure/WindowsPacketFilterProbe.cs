@@ -28,9 +28,9 @@ namespace ProxiFyreUI.Infrastructure
 
         public string StartupMessage => IsAvailable
             ? null
-            : "Windows Packet Filter (WinpkFilter) is unavailable or incompatible. " +
-              "ProxiFyre requires a compatible NDISRD driver. Install or update it from " + DownloadUrl +
-              ", restart Windows if requested, and try again.";
+            : "Windows Packet Filter (WinpkFilter) 不可用或不兼容。" +
+              "ProxiFyre 需要兼容的 NDISRD 驱动程序。请从 " + DownloadUrl +
+              " 安装或更新，如提示请重启 Windows，然后重试。";
 
         public static WindowsPacketFilterStatus Available()
         {
@@ -114,7 +114,7 @@ namespace ProxiFyreUI.Infrastructure
             // after service registration is removed.
             if (serviceState == WindowsPacketFilterServiceState.Missing)
             {
-                var details = "The NDISRD driver service is not installed.";
+                var details = "NDISRD 驱动程序服务未安装。";
                 if (!string.IsNullOrWhiteSpace(deviceStatus.Details))
                     details += " " + deviceStatus.Details;
                 return WindowsPacketFilterStatus.Unavailable(deviceStatus.NativeErrorCode,
@@ -149,7 +149,7 @@ namespace ProxiFyreUI.Infrastructure
                     {
                         var error = Marshal.GetLastWin32Error();
                         return WindowsPacketFilterStatus.Unavailable(error,
-                            "The NDISRD device could not be opened (Win32 error " + error + ": " +
+                            "无法打开 NDISRD 设备（Win32 错误 " + error + "：" +
                             new Win32Exception(error).Message + ").");
                     }
 
@@ -162,16 +162,16 @@ namespace ProxiFyreUI.Infrastructure
                     {
                         var error = Marshal.GetLastWin32Error();
                         return WindowsPacketFilterStatus.ActiveDeviceUnavailable(error,
-                            "The active NDISRD device opened, but IOCTL_NDISRD_GET_VERSION failed " +
-                            "(Win32 error " + error + ": " + new Win32Exception(error).Message +
+                            "活动 NDISRD 设备已打开，但 IOCTL_NDISRD_GET_VERSION 失败 " +
+                            "（Win32 错误 " + error + "：" + new Win32Exception(error).Message +
                             ").");
                     }
 
                     if (bytesReturned != sizeof(uint))
                     {
                         return WindowsPacketFilterStatus.ActiveDeviceUnavailable(null,
-                            "The active NDISRD device returned an invalid version response (" +
-                            bytesReturned + " bytes; expected " + sizeof(uint) + ").");
+                            "活动 NDISRD 设备返回了无效的版本响应（" +
+                            bytesReturned + " 字节；预期 " + sizeof(uint) + " 字节）。");
                     }
 
                     return EvaluateDriverVersion(driverVersion);
@@ -181,7 +181,7 @@ namespace ProxiFyreUI.Infrastructure
                                        ex is TypeInitializationException)
             {
                 return WindowsPacketFilterStatus.Unavailable(null,
-                    "The NDISRD availability check failed: " + ex.Message);
+                    "NDISRD 可用性检查失败：" + ex.Message);
             }
         }
 
@@ -196,16 +196,16 @@ namespace ProxiFyreUI.Infrastructure
             if (apiMajor != RequiredApiMajor)
             {
                 return WindowsPacketFilterStatus.ActiveDeviceUnavailable(null,
-                    "The active NDISRD device reports an incompatible " + reported + ". " +
-                    "ProxiFyre supports API major " + RequiredApiMajor +
-                    " only; install a compatible WinpkFilter release (minimum API encoding " +
+                    "活动 NDISRD 设备报告了不兼容的 " + reported + "。" +
+                    "ProxiFyre 仅支持 API 主版本 " + RequiredApiMajor +
+                    "；请安装兼容的 WinpkFilter 版本（最低 API 编码 " +
                     FormatApiEncoding(MinimumCompatibleApiVersion) + ").");
             }
 
             return WindowsPacketFilterStatus.ActiveDeviceUnavailable(null,
-                "The active NDISRD device reports " + reported + ". ProxiFyre requires API minor " +
-                FormatApiMinor(MinimumApiMinor) + " or later with API major " +
-                RequiredApiMajor + " (minimum API encoding " +
+                "活动 NDISRD 设备报告 " + reported + "。ProxiFyre 要求 API 次版本 " +
+                FormatApiMinor(MinimumApiMinor) + " 或更高，且 API 主版本为 " +
+                RequiredApiMajor + "（最低 API 编码 " +
                 FormatApiEncoding(MinimumCompatibleApiVersion) + ").");
         }
 

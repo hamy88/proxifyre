@@ -73,7 +73,7 @@ namespace ProxiFyre.Configuration
                 else if (string.Equals(value, "UDP", StringComparison.OrdinalIgnoreCase))
                     result |= ProxyProtocolSelection.Udp;
                 else
-                    throw new InvalidOperationException("supportedProtocols must contain only TCP and UDP.");
+                    throw new InvalidOperationException("supportedProtocols 只能包含 TCP 和 UDP。");
             }
 
             return result == ProxyProtocolSelection.None ? ProxyProtocolSelection.Both : result;
@@ -84,7 +84,7 @@ namespace ProxiFyre.Configuration
             if (values == null)
                 return ProxyAddressFamilySelection.Both;
             if (values.Count == 0)
-                throw new InvalidOperationException("supportedAddressFamilies must contain IPv4, IPv6, or both.");
+                throw new InvalidOperationException("supportedAddressFamilies 必须包含 IPv4、IPv6 或两者都包含。");
 
             var result = ProxyAddressFamilySelection.None;
             foreach (var value in values)
@@ -94,7 +94,7 @@ namespace ProxiFyre.Configuration
                 else if (string.Equals(value, "IPv6", StringComparison.OrdinalIgnoreCase))
                     result |= ProxyAddressFamilySelection.Ipv6;
                 else
-                    throw new InvalidOperationException("supportedAddressFamilies must contain only IPv4 and IPv6.");
+                    throw new InvalidOperationException("supportedAddressFamilies 只能包含 IPv4 和 IPv6。");
             }
 
             return result;
@@ -104,7 +104,7 @@ namespace ProxiFyre.Configuration
         {
             string canonical;
             if (!ConfigurationNormalizer.TryGetCanonicalTransport(value, out canonical))
-                throw new InvalidOperationException("socks5Transport must be TCP or TLS.");
+                throw new InvalidOperationException("socks5Transport 必须是 TCP 或 TLS。");
             return canonical == "TLS" ? Socks5TransportKind.Tls : Socks5TransportKind.Tcp;
         }
     }

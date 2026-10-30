@@ -12,7 +12,7 @@ namespace ProxiFyreUI.Infrastructure
         public string Name { get; set; }
         public int ProcessId { get; set; }
         public string ExecutablePath { get; set; }
-        public string DisplayPath => string.IsNullOrWhiteSpace(ExecutablePath) ? "Access unavailable" : ExecutablePath;
+        public string DisplayPath => string.IsNullOrWhiteSpace(ExecutablePath) ? "访问不可用" : ExecutablePath;
     }
 
     public interface IProcessCatalog

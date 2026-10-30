@@ -104,7 +104,7 @@ namespace ProxiFyreUI.Infrastructure
                 {
                     SaveResult = save,
                     ServiceResult = ServiceOperationResult.Failed(status,
-                        "The ProxiFyre service installation state could not be verified."),
+                        "无法确认 ProxiFyre 服务的安装状态。"),
                     Outcome = ConfigurationApplyOutcome.ServiceStatusUnavailable
                 };
             }
@@ -114,7 +114,7 @@ namespace ProxiFyreUI.Infrastructure
                 {
                     SaveResult = save,
                     ServiceResult = ServiceOperationResult.Failed(status,
-                        "The ProxiFyre service is marked for deletion. Wait for Windows to finish removing it before applying the configuration."),
+                        "ProxiFyre 服务已标记为待删除。请等待 Windows 完成删除后再应用配置。"),
                     Outcome = ConfigurationApplyOutcome.ServiceStatusUnavailable
                 };
             }
@@ -135,7 +135,7 @@ namespace ProxiFyreUI.Infrastructure
                     return new ConfigurationApplyResult
                     {
                         SaveResult = save,
-                        ServiceResult = TimedOut(status, "Service installation did not start before the apply timeout."),
+                        ServiceResult = TimedOut(status, "服务安装未在应用超时前开始。"),
                         Outcome = ConfigurationApplyOutcome.InstallFailed
                     };
                 }
@@ -161,7 +161,7 @@ namespace ProxiFyreUI.Infrastructure
 
                 remaining = Remaining(timeout, operationClock);
                 var start = remaining <= TimeSpan.Zero
-                    ? TimedOut(install.Status, "The service was installed, but start did not begin before the apply timeout.")
+                    ? TimedOut(install.Status, "服务已安装，但启动未在应用超时前开始。")
                     : await _serviceController.StartAsync(enginePath,
                         () => IsServiceEngineCurrent(enginePath),
                         remaining, cancellationToken).ConfigureAwait(false);
@@ -193,7 +193,7 @@ namespace ProxiFyreUI.Infrastructure
                 return ServiceEngineChanged(save, null);
             var restartBudget = Remaining(timeout, operationClock);
             var restart = restartBudget <= TimeSpan.Zero
-                ? TimedOut(status, "Service restart did not begin before the apply timeout.")
+                ? TimedOut(status, "服务重启未在应用超时前开始。")
                 : await _serviceController.RestartAsync(enginePath,
                     () => IsServiceEngineCurrent(enginePath),
                     restartBudget, cancellationToken).ConfigureAwait(false);
@@ -244,7 +244,7 @@ namespace ProxiFyreUI.Infrastructure
                 {
                     SaveResult = save,
                     RollbackError = rollbackError ?? new InvalidOperationException(
-                        "A backup from this save operation is not available."),
+                        "本次保存操作的备份不可用。"),
                     Outcome = ConfigurationApplyOutcome.RollbackFailed
                 };
             }
@@ -263,7 +263,7 @@ namespace ProxiFyreUI.Infrastructure
 
             var remaining = Remaining(timeout, operationClock);
             var restart = remaining <= TimeSpan.Zero
-                ? TimedOut(null, "The previous configuration was restored, but restart did not begin before the apply timeout.")
+                ? TimedOut(null, "上一配置已恢复，但重启未在应用超时前开始。")
                 : await _serviceController.RestartAsync(expectedEnginePath,
                     () => IsServiceEngineCurrent(expectedEnginePath), remaining,
                     cancellationToken).ConfigureAwait(false);

@@ -68,7 +68,7 @@ namespace ProxiFyreUI.Infrastructure
         public WorkspaceLoadResult Load(EngineLocation engineLocation)
         {
             if (engineLocation == null || !engineLocation.IsResolved)
-                throw new InvalidOperationException("Resolve ProxiFyre.exe before loading its configuration.");
+                throw new InvalidOperationException("请先解析 ProxiFyre.exe，再加载其配置。");
 
             // Build the complete replacement state before touching the active workspace. A
             // malformed or inaccessible configuration at a newly selected engine must not
@@ -115,7 +115,7 @@ namespace ProxiFyreUI.Infrastructure
         public WorkspaceLoadResult Reload()
         {
             if (!HasConfigurationPath)
-                throw new InvalidOperationException("No configuration path is currently resolved.");
+                throw new InvalidOperationException("当前未解析配置路径。");
 
             var location = new EngineLocation(EnginePath, EngineLocationSource.UserSelection);
             return Load(location);
@@ -164,7 +164,7 @@ namespace ProxiFyreUI.Infrastructure
         public ValidationResult ValidateLiveFile()
         {
             if (!HasConfigurationPath || !File.Exists(ConfigurationPath))
-                throw new FileNotFoundException("The live app-config.json does not exist.", ConfigurationPath);
+                throw new FileNotFoundException("活动 app-config.json 不存在。", ConfigurationPath);
             return _validator.Validate(_fileStore.Load(ConfigurationPath).Configuration);
         }
 
@@ -186,7 +186,7 @@ namespace ProxiFyreUI.Infrastructure
                 {
                     Status = WorkspaceSaveStatus.Failed,
                     Validation = validation,
-                    Error = new InvalidOperationException("No configuration path is resolved.")
+                    Error = new InvalidOperationException("未解析配置路径。")
                 };
             }
 
@@ -271,14 +271,14 @@ namespace ProxiFyreUI.Infrastructure
             if (string.IsNullOrWhiteSpace(backupPath) || !File.Exists(backupPath) ||
                 string.IsNullOrWhiteSpace(ConfigurationPath) || !File.Exists(ConfigurationPath))
             {
-                error = new FileNotFoundException("A recoverable configuration backup is not available.", backupPath);
+                error = new FileNotFoundException("没有可恢复的配置备份可用。", backupPath);
                 return false;
             }
 
             if (expectedBackupFingerprint == null || expectedSavedFingerprint == null)
             {
                 error = new InvalidOperationException(
-                    "The rollback is not bound to a completed configuration save.");
+                    "回滚未绑定到已完成的配置保存。");
                 return false;
             }
 
@@ -297,7 +297,7 @@ namespace ProxiFyreUI.Infrastructure
             }
             if (!string.Equals(actualBackupPath, expectedBackupPath, StringComparison.OrdinalIgnoreCase))
             {
-                error = new InvalidOperationException("The rollback source is not the backup for the active configuration.");
+                error = new InvalidOperationException("回滚来源不是活动配置的备份。");
                 return false;
             }
 
@@ -326,7 +326,7 @@ namespace ProxiFyreUI.Infrastructure
                 if (rollbackValidation.HasErrors)
                 {
                     error = new InvalidOperationException(
-                        "The saved backup is no longer a valid ProxiFyre configuration.");
+                        "已保存的备份不再是有效的 ProxiFyre 配置。");
                     return false;
                 }
 
@@ -413,14 +413,14 @@ namespace ProxiFyreUI.Infrastructure
         public static string FormatValidation(ValidationResult validation, bool includeWarnings = true)
         {
             if (validation == null)
-                return "Configuration has not been validated.";
+                return "配置尚未验证。";
 
             var issues = includeWarnings ? validation.Issues : validation.Errors;
             if (issues == null || !issues.Any())
-                return "Configuration is valid.";
+                return "配置有效。";
 
             return string.Join(Environment.NewLine, issues.Select(issue =>
-                $"{issue.Severity}: {issue.Message}" +
+                $"{issue.Message}" +
                 (string.IsNullOrWhiteSpace(issue.Path) ? string.Empty : $" ({issue.Path})")));
         }
     }

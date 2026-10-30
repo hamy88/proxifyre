@@ -52,7 +52,7 @@ namespace ProxiFyre.Tests
 
             Assert.Multiple(() =>
             {
-                Assert.That(text, Does.Contain("Service operation details:"));
+                Assert.That(text, Does.Contain("服务操作详情："));
                 Assert.That(text, Does.Contain("lifecycle output"));
                 Assert.That(text, Does.Contain("Historical warning"));
                 Assert.That(text, Does.Not.Contain("command-secret"));

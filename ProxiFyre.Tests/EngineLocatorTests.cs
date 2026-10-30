@@ -89,7 +89,7 @@ namespace ProxiFyre.Tests
 
             Assert.That(result.IsResolved, Is.False);
             Assert.That(result.Source, Is.EqualTo(UiEngineLocationSource.ServiceRegistration));
-            StringAssert.Contains("installed service executable", result.Error);
+            StringAssert.Contains("服务可执行文件", result.Error);
         }
 
         [Test]
@@ -108,7 +108,7 @@ namespace ProxiFyre.Tests
                 Assert.That(result.IsResolved, Is.False);
                 Assert.That(result.Source,
                     Is.EqualTo(UiEngineLocationSource.ServiceRegistration));
-                Assert.That(result.Error, Does.Contain("could not be read"));
+                Assert.That(result.Error, Does.Contain("无法读取"));
                 Assert.Throws<UnauthorizedAccessException>(() =>
                     locator.GetRegisteredServiceImagePath());
             });
@@ -130,7 +130,7 @@ namespace ProxiFyre.Tests
                 Assert.That(result.IsResolved, Is.False);
                 Assert.That(result.Source,
                     Is.EqualTo(UiEngineLocationSource.ServiceRegistration));
-                Assert.That(result.Error, Does.Contain("could not be read"));
+                Assert.That(result.Error, Does.Contain("无法读取"));
             });
         }
 
@@ -372,7 +372,7 @@ namespace ProxiFyre.Tests
             {
                 Assert.That(result.IsResolved, Is.False);
                 Assert.That(result.Source, Is.EqualTo(UiEngineLocationSource.None));
-                Assert.That(result.Error, Does.Contain("valid ProxiFyre.exe"));
+                Assert.That(result.Error, Does.Contain("有效的 ProxiFyre.exe"));
             });
         }
 
@@ -392,7 +392,7 @@ namespace ProxiFyre.Tests
             Assert.Multiple(() =>
             {
                 Assert.That(result.IsResolved, Is.False);
-                Assert.That(result.Error, Does.Contain("protected per-machine location"));
+                Assert.That(result.Error, Does.Contain("受保护的每计算机位置"));
             });
         }
 
@@ -412,7 +412,7 @@ namespace ProxiFyre.Tests
             Assert.Multiple(() =>
             {
                 Assert.That(result.IsResolved, Is.False);
-                Assert.That(result.Error, Does.Contain("privileged service uninstall"));
+                Assert.That(result.Error, Does.Contain("特权服务卸载"));
                 Assert.That(result.Error, Does.Contain("file owner"));
             });
         }

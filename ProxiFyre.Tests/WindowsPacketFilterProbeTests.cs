@@ -35,8 +35,8 @@ namespace ProxiFyre.Tests
             Assert.Multiple(() =>
             {
                 Assert.That(status.IsAvailable, Is.False);
-                Assert.That(status.Details, Does.Contain("API minor 0x0600"));
-                Assert.That(status.Details, Does.Contain("minimum API encoding 0x06013000"));
+                Assert.That(status.Details, Does.Contain("API 次版本 0x0600"));
+                Assert.That(status.Details, Does.Contain("最低 API 编码 0x06013000"));
             });
         }
 
@@ -52,7 +52,7 @@ namespace ProxiFyre.Tests
             {
                 Assert.That(status.IsAvailable, Is.False);
                 Assert.That(status.Details, Does.Contain(reportedMajor));
-                Assert.That(status.Details, Does.Contain("supports API major 3 only"));
+                Assert.That(status.Details, Does.Contain("仅支持 API 主版本 3"));
             });
         }
 
@@ -82,7 +82,7 @@ namespace ProxiFyre.Tests
             {
                 Assert.That(status.IsAvailable, Is.False);
                 Assert.That(status.Details, Does.Contain("API major 4"));
-                Assert.That(status.StartupMessage, Does.Contain("unavailable or incompatible"));
+                Assert.That(status.StartupMessage, Does.Contain("不可用或不兼容"));
             });
         }
     }

@@ -74,7 +74,7 @@ namespace ProxiFyreUI.Infrastructure
     {
         private const int MaximumInitialBytes = 1024 * 1024;
         private const int MaximumPendingCharacters = 64 * 1024;
-        private const string TruncatedLineSuffix = " … [line truncated by ProxiFyreUI]";
+        private const string TruncatedLineSuffix = " … [该行已被 ProxiFyreUI 截断]";
         private const int MaximumBytesPerPoll = 256 * 1024;
         private const int PositionSentinelBytes = 64;
         private readonly object _sync = new object();
@@ -168,7 +168,7 @@ namespace ProxiFyreUI.Infrastructure
 
                 if (string.IsNullOrWhiteSpace(directory) || !Directory.Exists(directory))
                 {
-                    RaiseStatus("Waiting for the log directory to be created…", callbackGeneration,
+                    RaiseStatus("正在等待创建日志目录…", callbackGeneration,
                         directory, allowWithoutTimer);
                     return;
                 }
@@ -176,7 +176,7 @@ namespace ProxiFyreUI.Infrastructure
                 var latest = LogFileLocator.FindLatest(directory);
                 if (latest == null)
                 {
-                    RaiseStatus("Waiting for a ProxiFyre log file…", callbackGeneration,
+                    RaiseStatus("正在等待 ProxiFyre 日志文件…", callbackGeneration,
                         directory, allowWithoutTimer);
                     return;
                 }
@@ -190,7 +190,7 @@ namespace ProxiFyreUI.Infrastructure
             catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException ||
                                        ex is DirectoryNotFoundException)
             {
-                RaiseStatus("Log file is temporarily unavailable: " + ex.Message,
+                RaiseStatus("日志文件暂时不可用：" + ex.Message,
                     callbackGeneration, directory, allowWithoutTimer);
             }
             finally
@@ -261,7 +261,7 @@ namespace ProxiFyreUI.Infrastructure
             if (reset || lines.Count > 0)
                 LinesRead?.Invoke(this, new LogLinesEventArgs(lines, filePath,
                     sourceDirectoryPath, generation, reset));
-            RaiseStatus((allowWithoutTimer ? "Loaded " : "Following ") + Path.GetFileName(filePath),
+            RaiseStatus((allowWithoutTimer ? "已加载 " : "正在跟随 ") + Path.GetFileName(filePath),
                 generation, sourceDirectoryPath, allowWithoutTimer);
         }
 

@@ -43,30 +43,30 @@ namespace ProxiFyreUI.Infrastructure
 
             var assembly = Assembly.GetExecutingAssembly();
             var builder = new StringBuilder();
-            builder.AppendLine("ProxiFyre diagnostics");
-            builder.AppendLine("Generated (UTC): " + DateTime.UtcNow.ToString("O"));
-            builder.AppendLine("GUI version: " + GetVersion(assembly.Location));
-            builder.AppendLine("Engine version: " + GetVersion(context.EnginePath));
-            builder.AppendLine("OS: " + Environment.OSVersion.VersionString);
-            builder.AppendLine("OS architecture: " + GetOperatingSystemArchitecture());
-            builder.AppendLine("GUI process architecture: " + GetProcessArchitecture());
-            builder.AppendLine("Service name: " + ProxiFyrePaths.ServiceName);
-            builder.AppendLine("Service state: " + (context.ServiceStatus?.ToString() ?? "Unknown"));
+            builder.AppendLine("ProxiFyre 诊断信息");
+            builder.AppendLine("生成时间 (UTC)：" + DateTime.UtcNow.ToString("O"));
+            builder.AppendLine("GUI 版本：" + GetVersion(assembly.Location));
+            builder.AppendLine("引擎版本：" + GetVersion(context.EnginePath));
+            builder.AppendLine("操作系统：" + Environment.OSVersion.VersionString);
+            builder.AppendLine("操作系统架构：" + GetOperatingSystemArchitecture());
+            builder.AppendLine("GUI 进程架构：" + GetProcessArchitecture());
+            builder.AppendLine("服务名称：" + ProxiFyrePaths.ServiceName);
+            builder.AppendLine("服务状态：" + (context.ServiceStatus?.ToString() ?? "未知"));
             if (!string.IsNullOrWhiteSpace(context.ServiceStatus?.Error))
-                builder.AppendLine("Service error: " + Redact(context.ServiceStatus.Error, secrets));
-            builder.AppendLine("Engine path: " + (context.EnginePath ?? "Not resolved"));
-            builder.AppendLine("Configuration path: " + (context.ConfigurationPath ?? "Not resolved"));
-            builder.AppendLine("Log directory: " + (context.LogDirectoryPath ?? "Not resolved"));
+                builder.AppendLine("服务错误：" + Redact(context.ServiceStatus.Error, secrets));
+            builder.AppendLine("引擎路径：" + (context.EnginePath ?? "未解析"));
+            builder.AppendLine("配置路径：" + (context.ConfigurationPath ?? "未解析"));
+            builder.AppendLine("日志目录：" + (context.LogDirectoryPath ?? "未解析"));
 
             if (context.Validation == null)
             {
-                builder.AppendLine("Configuration validation: Not run");
+                builder.AppendLine("配置验证：未运行");
             }
             else
             {
-                builder.AppendLine("Configuration validation: " +
-                    (context.Validation.HasErrors ? "Invalid" : "Valid") +
-                    $" ({context.Validation.Errors.Count()} error(s), {context.Validation.Warnings.Count()} warning(s))");
+                builder.AppendLine("配置验证：" +
+                    (context.Validation.HasErrors ? "无效" : "有效") +
+                    $"（{context.Validation.Errors.Count()} 个错误，{context.Validation.Warnings.Count()} 个警告）");
                 foreach (var issue in context.Validation.Issues)
                     builder.AppendLine($"  {issue.Severity} [{issue.Code}] " + Redact(issue.Message, secrets));
             }
@@ -77,7 +77,7 @@ namespace ProxiFyreUI.Infrastructure
                 .ToArray();
             if (messages.Length > 0)
             {
-                builder.AppendLine("Recent warnings/errors (redacted):");
+                builder.AppendLine("最近的警告/错误（已脱敏）：");
                 foreach (var message in messages)
                     builder.AppendLine("  " + Redact(message, secrets));
             }
@@ -348,15 +348,15 @@ namespace ProxiFyreUI.Infrastructure
         private static string GetVersion(string path)
         {
             if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
-                return "Not available";
+                return "不可用";
             try
             {
                 var version = FileVersionInfo.GetVersionInfo(path).FileVersion;
-                return string.IsNullOrWhiteSpace(version) ? "Not available" : version;
+                return string.IsNullOrWhiteSpace(version) ? "不可用" : version;
             }
             catch (Exception ex) when (ex is IOException || ex is UnauthorizedAccessException)
             {
-                return "Not available";
+                return "不可用";
             }
         }
 

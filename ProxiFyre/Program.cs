@@ -174,19 +174,18 @@ namespace ProxiFyre
             if (!_socksify.Start())
             {
                 var message = _useLimitedMode
-                    ? "Failed to start the ProxiFyre proxy engine in non-administrator mode. " +
-                      "Ensure the Windows Packet Filter (NDISRD) driver is installed and running and " +
-                      "that this Windows account is permitted to activate it, or retry from an " +
-                      "Administrator console."
-                    : "Failed to start the ProxiFyre proxy engine. Ensure the Windows Packet Filter " +
-                      "(NDIS lightweight filter) driver is installed and running, then restart the service.";
+                    ? "无法在非管理员模式下启动 ProxiFyre 代理引擎。" +
+                      "请确保 Windows Packet Filter (NDISRD) 驱动程序已安装并运行，且" +
+                      "此 Windows 账户有权激活它；否则请从管理员控制台重试。"
+                    : "无法启动 ProxiFyre 代理引擎。请确保 Windows Packet Filter " +
+                      "(NDIS 轻量级过滤器) 驱动程序已安装并运行，然后重启服务。";
                 LoggerInstance.Error(message);
                 throw new InvalidOperationException(message);
             }
 
             // Inform user that the application is running
             if (_logLevel >= LogLevel.Info)
-                LoggerInstance.Info("ProxiFyre Service is running...");
+                LoggerInstance.Info("ProxiFyre 服务正在运行...");
         }
 
         /// <summary>
@@ -197,8 +196,8 @@ namespace ProxiFyre
         {
             if (!File.Exists(configFilePath))
             {
-                var message = $"Configuration file not found: '{configFilePath}'. " +
-                              "Create an app-config.json next to ProxiFyre.exe before starting the service.";
+                var message = $"找不到配置文件：'{configFilePath}'。" +
+                              "请在启动服务前，在 ProxiFyre.exe 旁创建 app-config.json。";
                 LoggerInstance.Error(message);
                 throw new InvalidOperationException(message);
             }
@@ -210,7 +209,7 @@ namespace ProxiFyre
             }
             catch (Exception ex)
             {
-                var message = $"Failed to read or parse configuration file '{configFilePath}': {ex.Message}";
+                var message = $"无法读取或解析配置文件 '{configFilePath}'：{ex.Message}";
                 LoggerInstance.Error(ex, message);
                 throw new InvalidOperationException(message, ex);
             }
@@ -225,7 +224,7 @@ namespace ProxiFyre
                     LoggerInstance.Error(FormatValidationIssue(error));
 
                 throw new InvalidOperationException(
-                    "ProxiFyre configuration validation failed. Review the preceding configuration errors.");
+                    "ProxiFyre 配置验证失败。请查看前面的配置错误。");
             }
 
             return new ConfigurationNormalizer().Normalize(configuration);
@@ -233,8 +232,8 @@ namespace ProxiFyre
 
         private static string FormatValidationIssue(ValidationIssue issue)
         {
-            var location = string.IsNullOrWhiteSpace(issue.Path) ? string.Empty : $" at {issue.Path}";
-            return $"Configuration {issue.Severity.ToString().ToLowerInvariant()} {issue.Code}{location}: {issue.Message}";
+            var location = string.IsNullOrWhiteSpace(issue.Path) ? string.Empty : $" 位于 {issue.Path}";
+            return $"配置 {issue.Severity.ToString().ToLowerInvariant()} {issue.Code}{location}：{issue.Message}";
         }
 
         private static SupportedProtocolsEnum MapProtocols(ProxyProtocolSelection selection)
@@ -362,11 +361,11 @@ namespace ProxiFyre
     internal class Program
     {
         internal const string LimitedModeWarning =
-            "WARNING: ProxiFyre is running in explicitly enabled non-administrator mode. " +
-            "Driver access and process attribution are best effort. Traffic whose owner cannot be " +
-            "resolved (which may include protected, elevated, system, or other-user traffic) remains direct. " +
-            "This mode is not a strict current-user security boundary and must not be used for complete " +
-            "machine-wide enforcement.";
+            "警告：ProxiFyre 正在以显式启用的非管理员模式运行。" +
+            "驱动程序访问和进程归属均尽力而为。无法解析所有者的流量" +
+            "（可能包括受保护、已提权、系统或其他用户的流量）将保持直连。" +
+            "此模式不是严格的当前用户安全边界，不得用于完整的" +
+            "全机器强制代理。";
 
         private static bool IsElevated()
         {
@@ -400,7 +399,7 @@ namespace ProxiFyre
             catch (Exception ex)
             {
                 Console.Error.WriteLine(
-                    "ProxiFyre could not establish its secure native dependency loading policy. " +
+                    "ProxiFyre 无法建立其安全的本机依赖加载策略。" +
                     ex.Message);
                 return 126; // ERROR_MOD_NOT_FOUND
             }
@@ -437,12 +436,12 @@ namespace ProxiFyre
 
         internal static string GetUnprotectedServiceLocationMessage(string locationFailure)
         {
-            return "ProxiFyre cannot install or run its LocalSystem service from this location " +
-                   "because its files might be replaceable without administrator approval." +
-                   Environment.NewLine + "Reason: " + locationFailure + Environment.NewLine +
-                   "To fix this, install ProxiFyre with the official setup or MSI package. It " +
-                   "creates a protected directory under Program Files. To use the ZIP package " +
-                   "instead, follow the protected staging procedure at " +
+            return "ProxiFyre 无法从此位置安装或运行其 LocalSystem 服务，" +
+                   "因为其文件可能在未经管理员批准的情况下被替换。" +
+                   Environment.NewLine + "原因：" + locationFailure + Environment.NewLine +
+                   "要解决此问题，请使用官方安装程序或 MSI 包安装 ProxiFyre。它" +
+                   "会在 Program Files 下创建受保护目录。若要改用 ZIP 包，" +
+                   "请按照以下位置的受保护暂存流程操作：" +
                    GetZipStagingDocumentationUrl();
         }
 
@@ -467,20 +466,20 @@ namespace ProxiFyre
             switch (denial)
             {
                 case EngineCommandLineDenial.ConflictingOperationalCommands:
-                    return "ProxiFyre received more than one operational command. Specify only one " +
-                           "of run, install, uninstall, start, stop, or command.";
+                    return "ProxiFyre 收到了多个操作命令。请只指定 " +
+                           "run、install、uninstall、start、stop 或 command 中的一个。";
                 case EngineCommandLineDenial.AllowNotAdministratorWithServiceControlCommand:
-                    return "--allow-not-admin is available only for an interactive console run; " +
-                           "it cannot be combined with service-control commands: install, " +
-                           "uninstall, start, stop, or command.";
+                    return "--allow-not-admin 仅适用于交互式控制台运行；" +
+                           "它不能与以下服务控制命令组合：install、 " +
+                           "uninstall、start、stop 或 command。";
                 case EngineCommandLineDenial.AllowNotAdministratorRequiresInteractiveSession:
-                    return "--allow-not-admin cannot be used by the Windows service or another " +
-                           "non-interactive session. Run ProxiFyre interactively instead.";
+                    return "--allow-not-admin 不能用于 Windows 服务或其他" +
+                           "非交互式会话。请改为以交互方式运行 ProxiFyre。";
                 default:
-                    return "ProxiFyre must run with administrator privileges so process ownership, " +
-                           "application exclusions, and packet redirection remain reliable. Start it from " +
-                           "an Administrator console, install and start the Windows service, or explicitly " +
-                           "opt into the limited interactive mode with --allow-not-admin.";
+                    return "ProxiFyre 必须以管理员权限运行，以确保进程归属、 " +
+                           "应用程序排除和数据包重定向可靠。请从管理员控制台启动它，" +
+                           "安装并启动 Windows 服务，或使用 --allow-not-admin " +
+                           "显式选择受限交互模式。";
             }
         }
 
@@ -525,8 +524,8 @@ namespace ProxiFyre
 
                         x.RunAsLocalSystem();
 
-                        x.SetDescription("ProxiFyre - SOCKS5 ProxiFyre Service");
-                        x.SetDisplayName("ProxiFyre Service");
+                        x.SetDescription("ProxiFyre - SOCKS5 代理服务");
+                        x.SetDisplayName("ProxiFyre 服务");
                         x.SetServiceName(ProxiFyrePaths.ServiceName);
                         x.DependsOn(ProxiFyrePaths.WindowsPacketFilterServiceName);
 

@@ -26,7 +26,7 @@ namespace ProxiFyre.Configuration
             var issues = new List<ValidationIssue>();
             if (configuration == null)
             {
-                issues.Add(Error("CONFIGURATION_NULL", "The configuration contains no settings.", null));
+                issues.Add(Error("CONFIGURATION_NULL", "配置不包含任何设置。", null));
                 return new ValidationResult(issues);
             }
 
@@ -35,12 +35,12 @@ namespace ProxiFyre.Configuration
 
             if (configuration.Proxies == null)
             {
-                issues.Add(Error("PROXIES_MISSING", "The required proxies property is missing.", "proxies"));
+                issues.Add(Error("PROXIES_MISSING", "缺少必需的 proxies 属性。", "proxies"));
                 return new ValidationResult(issues);
             }
             if (configuration.Proxies.Count == 0)
             {
-                issues.Add(Error("PROXIES_EMPTY", "At least one proxy rule must be configured.", "proxies"));
+                issues.Add(Error("PROXIES_EMPTY", "必须至少配置一条代理规则。", "proxies"));
                 return new ValidationResult(issues);
             }
 
@@ -51,7 +51,7 @@ namespace ProxiFyre.Configuration
                 {
                     issues.Add(Error(
                         "PROXY_NULL",
-                        "The proxy list contains a null entry. Remove it or replace it with a valid rule.",
+                        "代理列表包含空条目。请移除它或替换为有效规则。",
                         RulePath(index),
                         index));
                     continue;
@@ -72,7 +72,7 @@ namespace ProxiFyre.Configuration
             {
                 issues.Add(Error(
                     "PROXY_NULL",
-                    "The proxy rule is null.",
+                    "代理规则为空。",
                     proxyRuleIndex.HasValue ? RulePath(proxyRuleIndex.Value) : "proxy",
                     proxyRuleIndex));
             }
@@ -92,7 +92,7 @@ namespace ProxiFyre.Configuration
             {
                 issues.Add(Warning(
                     "LOG_LEVEL_UNKNOWN",
-                    "The log level is not recognized and the engine will use Info. Supported values are Error, Warning, Info, Debug, and All.",
+                    "无法识别该日志级别，引擎将使用 Info。支持的值包括 Error、Warning、Info、Debug 和 All。",
                     "logLevel"));
             }
         }
@@ -108,7 +108,7 @@ namespace ProxiFyre.Configuration
                 {
                     issues.Add(Warning(
                         "EXCLUSION_BLANK",
-                        "Null and whitespace-only exclusions are ignored.",
+                        "空值和仅包含空白的排除项会被忽略。",
                         "excludes[" + index + "]"));
                 }
             }
@@ -123,21 +123,21 @@ namespace ProxiFyre.Configuration
             if (!EndpointParser.TryParse(rule.Socks5ProxyEndpoint, out endpoint, out endpointError))
             {
                 var code = "ENDPOINT_INVALID";
-                var message = "The SOCKS5 endpoint must contain a hostname or IPv4 address and a port from 1 to 65535.";
+                var message = "SOCKS5 端点必须包含主机名或 IPv4 地址，以及 1 到 65535 之间的端口。";
                 if (endpointError == EndpointParseError.Missing)
                 {
                     code = "ENDPOINT_MISSING";
-                    message = "A non-empty SOCKS5 proxy endpoint is required.";
+                    message = "必须提供非空的 SOCKS5 代理端点。";
                 }
                 else if (endpointError == EndpointParseError.InvalidPort || endpointError == EndpointParseError.MissingPort)
                 {
                     code = "ENDPOINT_PORT_INVALID";
-                    message = "The SOCKS5 endpoint port must be an integer from 1 to 65535.";
+                    message = "SOCKS5 端点端口必须是 1 到 65535 之间的整数。";
                 }
                 else if (endpointError == EndpointParseError.Ipv6UpstreamNotSupported)
                 {
                     code = "ENDPOINT_IPV6_UNSUPPORTED";
-                    message = "The current engine cannot connect to an IPv6-literal SOCKS5 endpoint; use an IPv4 address or a hostname with an A record.";
+                    message = "当前引擎无法连接 IPv6 字面量的 SOCKS5 端点；请使用 IPv4 地址或具有 A 记录的主机名。";
                 }
 
                 issues.Add(Error(code, message, prefix + ".socks5ProxyEndpoint", index));
@@ -149,7 +149,7 @@ namespace ProxiFyre.Configuration
             {
                 issues.Add(Error(
                     "AUTH_PASSWORD_MISSING",
-                    "A password is required when a username is configured.",
+                    "配置用户名时必须填写密码。",
                     prefix + ".password",
                     index));
             }
@@ -157,7 +157,7 @@ namespace ProxiFyre.Configuration
             {
                 issues.Add(Error(
                     "AUTH_USERNAME_MISSING",
-                    "A username is required when a password is configured.",
+                    "配置密码时必须填写用户名。",
                     prefix + ".username",
                     index));
             }
@@ -165,14 +165,14 @@ namespace ProxiFyre.Configuration
             ValidateCredentialLength(
                 rule.Username,
                 "AUTH_USERNAME_TOO_LONG",
-                "The username must encode to no more than 255 bytes for SOCKS5 authentication.",
+                "SOCKS5 身份验证的用户名编码后不得超过 255 字节。",
                 prefix + ".username",
                 index,
                 issues);
             ValidateCredentialLength(
                 rule.Password,
                 "AUTH_PASSWORD_TOO_LONG",
-                "The password must encode to no more than 255 bytes for SOCKS5 authentication.",
+                "SOCKS5 身份验证的密码编码后不得超过 255 字节。",
                 prefix + ".password",
                 index,
                 issues);
@@ -230,7 +230,7 @@ namespace ProxiFyre.Configuration
             {
                 issues.Add(Warning(
                     "APP_NAMES_EMPTY",
-                    "This rule has no application matches and will not match any process.",
+                    "此规则没有应用程序匹配项，不会匹配任何进程。",
                     prefix + ".appNames",
                     ruleIndex));
                 return;
@@ -252,7 +252,7 @@ namespace ProxiFyre.Configuration
                 {
                     issues.Add(Warning(
                         "APP_NAME_WHITESPACE",
-                        "Null and whitespace-only application matches are ignored. An explicit empty string, not spaces, is the catch-all.",
+                        "空值和仅包含空白的应用程序匹配项会被忽略。兜底规则是显式空字符串，而不是空格。",
                         prefix + ".appNames[" + index + "]",
                         ruleIndex));
                     continue;
@@ -263,7 +263,7 @@ namespace ProxiFyre.Configuration
                 {
                     issues.Add(Warning(
                         "APP_MATCH_DUPLICATE",
-                        "This application match is duplicated within the same rule.",
+                        "此应用程序匹配项在同一规则中重复。",
                         prefix + ".appNames[" + index + "]",
                         ruleIndex));
                 }
@@ -273,7 +273,7 @@ namespace ProxiFyre.Configuration
             {
                 issues.Add(Warning(
                     "APP_NAMES_EMPTY",
-                    "After blank entries are removed, this rule has no application matches.",
+                    "移除空白条目后，此规则没有应用程序匹配项。",
                     prefix + ".appNames",
                     ruleIndex));
             }
@@ -281,7 +281,7 @@ namespace ProxiFyre.Configuration
             {
                 issues.Add(Warning(
                     "CATCH_ALL_DUPLICATE_IN_RULE",
-                    "This rule contains the catch-all more than once; only one explicit empty string is needed.",
+                    "此规则包含多个兜底匹配项；只需一个显式空字符串。",
                     prefix + ".appNames",
                     ruleIndex));
             }
@@ -299,7 +299,7 @@ namespace ProxiFyre.Configuration
             {
                 issues.Add(Warning(
                     "PROTOCOLS_EMPTY_LEGACY",
-                    "An explicit empty protocol list is treated as TCP and UDP for compatibility. Newly edited rules should select at least one protocol.",
+                    "为了兼容，显式的空协议列表会被视为 TCP 和 UDP。新编辑的规则应至少选择一种协议。",
                     prefix + ".supportedProtocols",
                     ruleIndex));
                 return;
@@ -313,7 +313,7 @@ namespace ProxiFyre.Configuration
                 {
                     issues.Add(Error(
                         "PROTOCOL_UNKNOWN",
-                        "Only TCP and UDP are valid protocol values; an unknown value must not silently enable both protocols.",
+                        "只有 TCP 和 UDP 是有效的协议值；未知值不得静默启用两种协议。",
                         prefix + ".supportedProtocols[" + index + "]",
                         ruleIndex));
                 }
@@ -332,7 +332,7 @@ namespace ProxiFyre.Configuration
             {
                 issues.Add(Error(
                     "ADDRESS_FAMILIES_EMPTY",
-                    "Select IPv4, IPv6, or both; omit the property to retain the legacy both-families default.",
+                    "请选择 IPv4、IPv6 或两者都选；省略该属性会保留旧版双地址族默认值。",
                     prefix + ".supportedAddressFamilies",
                     ruleIndex));
                 return;
@@ -346,7 +346,7 @@ namespace ProxiFyre.Configuration
                 {
                     issues.Add(Error(
                         "ADDRESS_FAMILY_UNKNOWN",
-                        "Only IPv4 and IPv6 are valid address-family values.",
+                        "只有 IPv4 和 IPv6 是有效的地址族值。",
                         prefix + ".supportedAddressFamilies[" + index + "]",
                         ruleIndex));
                 }
@@ -364,7 +364,7 @@ namespace ProxiFyre.Configuration
             {
                 issues.Add(Error(
                     "TRANSPORT_UNKNOWN",
-                    "The SOCKS5 transport must be TCP or TLS.",
+                    "SOCKS5 传输必须是 TCP 或 TLS。",
                     prefix + ".socks5Transport",
                     ruleIndex));
                 return;
@@ -380,7 +380,7 @@ namespace ProxiFyre.Configuration
                 {
                     issues.Add(Error(
                         "TLS_PIN_INVALID",
-                        "The certificate pin must contain exactly 64 hexadecimal SHA-256 characters after separators are removed.",
+                        "移除分隔符后，证书固定值必须恰好包含 64 个十六进制 SHA-256 字符。",
                         prefix + ".tlsPinnedSha256",
                         ruleIndex));
                 }
@@ -392,8 +392,8 @@ namespace ProxiFyre.Configuration
                 issues.Add(Warning(
                     hasPin ? "TLS_INVALID_CERTIFICATE_ALLOWED" : "TLS_IDENTITY_VERIFICATION_DISABLED",
                     hasPin
-                        ? "Normal TLS certificate validation is disabled. The configured certificate pin remains the identity check."
-                        : "Invalid TLS certificates are allowed without a pin. Upstream identity verification is completely disabled.",
+                        ? "已禁用正常 TLS 证书验证。已配置的证书固定值仍是身份检查依据。"
+                        : "允许无效 TLS 证书且未配置固定值。上游身份验证已完全禁用。",
                     prefix + ".tlsAllowInvalidCertificate",
                     ruleIndex));
             }
@@ -412,7 +412,7 @@ namespace ProxiFyre.Configuration
                     {
                         issues.Add(Warning(
                             "CATCH_ALL_NOT_LAST",
-                            "This catch-all rule shadows every rule after it because the first matching proxy wins. Move it last.",
+                            "此兜底规则会屏蔽其后的所有规则，因为首个匹配的代理规则生效。请将其移到最后。",
                             RulePath(index) + ".appNames",
                             index));
                     }
@@ -425,7 +425,7 @@ namespace ProxiFyre.Configuration
                 {
                     issues.Add(Warning(
                         "MULTIPLE_CATCH_ALL_RULES",
-                        "Multiple catch-all rules are configured; only the first effective catch-all can be reached.",
+                        "配置了多个兜底规则；只有第一个有效的兜底规则可被命中。",
                         RulePath(index) + ".appNames",
                         index));
                 }
@@ -454,8 +454,8 @@ namespace ProxiFyre.Configuration
                     {
                         issues.Add(Warning(
                             "APP_MATCH_SHADOWED",
-                            "This application match overlaps an earlier match in rule " +
-                            (shadowingMatch.RuleIndex + 1) + "; the earlier rule wins.",
+                            "此应用程序匹配项与规则 " +
+                            (shadowingMatch.RuleIndex + 1) + " 中的较早匹配项重叠；较早的规则生效。",
                             RulePath(ruleIndex) + ".appNames[" + appIndex + "]",
                             ruleIndex));
                     }

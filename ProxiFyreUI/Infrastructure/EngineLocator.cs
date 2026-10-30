@@ -98,21 +98,21 @@ namespace ProxiFyreUI.Infrastructure
                                        ex is System.Security.SecurityException)
             {
                 return new EngineLocation(null, EngineLocationSource.ServiceRegistration,
-                    "The installed service registration could not be read. " + ex.Message);
+                    "无法读取已安装服务的注册信息。" + ex.Message);
             }
             if (!string.IsNullOrWhiteSpace(registered))
             {
                 string executable;
                 if (!ServiceImagePathParser.TryGetExecutablePath(registered, out executable))
                     return new EngineLocation(null, EngineLocationSource.ServiceRegistration,
-                        "The installed service registration contains an invalid executable path.");
+                        "已安装服务的注册信息包含无效的可执行文件路径。");
 
                 executable = Environment.ExpandEnvironmentVariables(executable);
                 if (_engineValidator(executable))
                     return new EngineLocation(Path.GetFullPath(executable), EngineLocationSource.ServiceRegistration);
 
                 return new EngineLocation(executable, EngineLocationSource.ServiceRegistration,
-                    "The installed service executable could not be found or does not have a valid ProxiFyre identity.");
+                    "找不到已安装的服务可执行文件，或其 ProxiFyre 身份无效。");
             }
 
             var userInterfaceDirectory = string.IsNullOrWhiteSpace(_userInterfaceExecutablePath)
@@ -133,24 +133,24 @@ namespace ProxiFyreUI.Infrastructure
             }
 
             return new EngineLocation(null, EngineLocationSource.None,
-                "ProxiFyre.exe was not found. Select the engine executable to continue.");
+                "未找到 ProxiFyre.exe。请选择引擎可执行文件以继续。");
         }
 
         public EngineLocation ValidateUserSelection(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
-                return new EngineLocation(null, EngineLocationSource.None, "No engine executable was selected.");
+                return new EngineLocation(null, EngineLocationSource.None, "未选择引擎可执行文件。");
 
             string fullPath;
             try { fullPath = Path.GetFullPath(path); }
             catch (Exception ex) when (ex is ArgumentException || ex is NotSupportedException || ex is PathTooLongException)
             {
-                return new EngineLocation(path, EngineLocationSource.UserSelection, "The selected path is invalid.");
+                return new EngineLocation(path, EngineLocationSource.UserSelection, "所选路径无效。");
             }
 
             if (!_engineValidator(fullPath))
                 return new EngineLocation(fullPath, EngineLocationSource.UserSelection,
-                    "Select an existing ProxiFyre.exe with a valid ProxiFyre engine identity.");
+                    "请选择具有有效 ProxiFyre 引擎身份的现有 ProxiFyre.exe。");
 
             return new EngineLocation(fullPath, EngineLocationSource.UserSelection);
         }
@@ -175,8 +175,8 @@ namespace ProxiFyreUI.Infrastructure
             if (!string.IsNullOrWhiteSpace(locationFailure))
             {
                 return new EngineLocation(validated.Path, EngineLocationSource.UserSelection,
-                    "This ProxiFyre.exe cannot be used for a privileged service " +
-                    "uninstall because it is not in a protected per-machine location. " +
+                    "此 ProxiFyre.exe 不能用于特权服务" +
+                    "卸载，因为它不在受保护的每计算机位置。" +
                     locationFailure);
             }
 
@@ -216,8 +216,8 @@ namespace ProxiFyreUI.Infrastructure
             }
 
             return new EngineLocation(null, EngineLocationSource.None,
-                "No valid ProxiFyre.exe in a protected per-machine location is available to " +
-                "run the privileged service uninstall command.");
+                "受保护的每计算机位置中没有可用于" +
+                "运行特权服务卸载命令的有效 ProxiFyre.exe。");
         }
 
         public string GetRegisteredServiceImagePath()
@@ -298,7 +298,7 @@ namespace ProxiFyreUI.Infrastructure
             var imagePath = value as string;
             if (string.IsNullOrWhiteSpace(imagePath))
                 throw new InvalidDataException(
-                    "The installed service registration has no valid ImagePath value.");
+                    "已安装服务的注册信息没有有效的 ImagePath 值。");
             return imagePath;
         }
 
@@ -345,7 +345,7 @@ namespace ProxiFyreUI.Infrastructure
             var fullEnginePath = Path.GetFullPath(enginePath);
             var directory = Path.GetDirectoryName(fullEnginePath);
             if (string.IsNullOrWhiteSpace(directory))
-                throw new ArgumentException("The engine executable must have a directory.",
+                throw new ArgumentException("引擎可执行文件必须位于某个目录中。",
                     nameof(enginePath));
 
             var payload = new string[DependencyFileNames.Length + 3];

@@ -48,7 +48,7 @@ namespace ProxiFyre
         {
             var kernel32 = GetModuleHandle("kernel32.dll");
             if (kernel32 == IntPtr.Zero)
-                throw CreateWin32Exception("The Windows loader module could not be resolved.");
+                throw CreateWin32Exception("无法解析 Windows 加载器模块。");
 
             // SetDefaultDllDirectories was introduced in Windows 8 and made available on
             // Windows 7 by KB2533623. Resolve it dynamically so an unpatched Windows 7 host can
@@ -63,7 +63,7 @@ namespace ProxiFyre
             if (!setDefaultDllDirectories(LoadLibrarySearchSystem32))
             {
                 throw CreateWin32Exception(
-                    "Windows rejected the System32-only native DLL search policy.");
+                    "Windows 拒绝了仅 System32 的本机 DLL 搜索策略。");
             }
         }
 
@@ -71,7 +71,7 @@ namespace ProxiFyre
         {
             var systemDirectory = Environment.SystemDirectory;
             if (string.IsNullOrWhiteSpace(systemDirectory) || !Path.IsPathRooted(systemDirectory))
-                throw new InvalidOperationException("The architecture-specific Windows SystemDirectory is unavailable.");
+                throw new InvalidOperationException("架构特定的 Windows SystemDirectory 不可用。");
 
             var loadedModules = new List<IntPtr>(RequiredRuntimeLibraries.Length);
             try
@@ -83,8 +83,8 @@ namespace ProxiFyre
                     if (module == IntPtr.Zero)
                     {
                         throw CreateWin32Exception(
-                            "Required Visual C++ runtime library '" + libraryName +
-                            "' could not be loaded from the Windows SystemDirectory.");
+                            "无法从 Windows SystemDirectory 加载所需的 Visual C++ 运行时库 '" +
+                            libraryName + "'。");
                     }
 
                     loadedModules.Add(module);

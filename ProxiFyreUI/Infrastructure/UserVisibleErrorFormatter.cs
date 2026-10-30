@@ -21,14 +21,14 @@ namespace ProxiFyreUI.Infrastructure
                 throw new ArgumentNullException(nameof(result));
 
             var recent = (recentWarningOrErrorLines ?? Enumerable.Empty<string>()).ToArray();
-            var message = result.Message ?? "The service operation failed.";
+            var message = result.Message ?? "服务操作失败。";
             if (!string.IsNullOrWhiteSpace(result.Details))
             {
-                message += "\r\n\r\nService operation details:\r\n" + result.Details;
+                message += "\r\n\r\n服务操作详情：\r\n" + result.Details;
             }
             if (recent.Length > 0)
             {
-                message += "\r\n\r\nRecent warning/error log lines:\r\n" +
+                message += "\r\n\r\n最近的警告/错误日志行：\r\n" +
                            string.Join(Environment.NewLine, recent);
             }
 

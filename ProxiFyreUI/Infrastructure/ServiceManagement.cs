@@ -60,14 +60,14 @@ namespace ProxiFyreUI.Infrastructure
             if (finalStatus != null && finalStatus.IsRunning)
             {
                 return ServiceOperationResult.Completed(finalStatus,
-                    "The ProxiFyre service is running.", confirmsConfigurationReloaded: true);
+                    "ProxiFyre 服务正在运行。", confirmsConfigurationReloaded: true);
             }
 
             var status = finalStatus ?? new ServiceStatusInfo(ProxiFyreServiceState.Error,
-                "The final service state could not be read.");
+                "无法读取最终服务状态。");
             return ServiceOperationResult.Failed(status,
-                "The service reached Running, but its final Running state could not be confirmed. " +
-                "Review the recent engine logs for the underlying error.",
+                "服务已达到“运行中”，但无法确认其最终运行状态。" +
+                "请查看最近的引擎日志以了解根本错误。",
                 null, null, false, ServiceOperationFailureKind.StartupFailed);
         }
     }
@@ -77,20 +77,20 @@ namespace ProxiFyreUI.Infrastructure
         public static ServiceOperationResult Evaluate(ServiceStatusInfo finalStatus)
         {
             var status = finalStatus ?? new ServiceStatusInfo(ProxiFyreServiceState.Error,
-                "The final service state could not be read.");
+                "无法读取最终服务状态。");
             if (status.State == ProxiFyreServiceState.Stopped)
             {
                 return ServiceOperationResult.Completed(status,
-                    "The ProxiFyre service is stopped.");
+                    "ProxiFyre 服务已停止。");
             }
             if (status.State == ProxiFyreServiceState.NotInstalled)
             {
                 return ServiceOperationResult.Completed(status,
-                    "The ProxiFyre service is no longer installed.");
+                    "ProxiFyre 服务已不再安装。");
             }
 
             return ServiceOperationResult.Failed(status,
-                "The service reached Stopped, but its final stopped state could not be confirmed.");
+                "服务已达到“已停止”，但无法确认其最终停止状态。");
         }
     }
 
@@ -150,25 +150,25 @@ namespace ProxiFyreUI.Infrastructure
             string details, int exitCode)
         {
             var status = finalStatus ?? new ServiceStatusInfo(ProxiFyreServiceState.Error,
-                "The final service state could not be read.");
+                "无法读取最终服务状态。");
             if (exitCode != 0)
             {
                 return ServiceOperationResult.Failed(status,
-                    "The service uninstall command failed.", details, exitCode);
+                    "服务卸载命令失败。", details, exitCode);
             }
 
             if (status.State == ProxiFyreServiceState.NotInstalled)
             {
                 return ServiceOperationResult.Completed(status,
-                    "The ProxiFyre service was uninstalled. Configuration and logs were preserved.",
+                    "ProxiFyre 服务已卸载。配置和日志已保留。",
                     details, exitCode);
             }
 
             if (status.State == ProxiFyreServiceState.DeletionPending)
             {
                 return ServiceOperationResult.Completed(status,
-                    "The ProxiFyre service is marked for deletion. Windows will finish removing it " +
-                    "after open service-management handles close. Configuration and logs were preserved.",
+                    "ProxiFyre 服务已标记为待删除。Windows 将在打开的" +
+                    "服务管理句柄关闭后完成删除。配置和日志已保留。",
                     details, exitCode);
             }
 
@@ -178,14 +178,14 @@ namespace ProxiFyreUI.Infrastructure
             if (status.State == ProxiFyreServiceState.Stopped)
             {
                 return ServiceOperationResult.Completed(status,
-                    "The uninstall command succeeded, but Windows is still completing service removal. " +
-                    "Close other service-management tools if the stopped service remains visible. " +
-                    "Configuration and logs were preserved.", details, exitCode);
+                    "卸载命令已成功，但 Windows 仍在完成服务删除。" +
+                    "如果已停止的服务仍可见，请关闭其他服务管理工具。" +
+                    "配置和日志已保留。", details, exitCode);
             }
 
             return ServiceOperationResult.Failed(status,
-                "The service uninstall command completed, but Windows did not confirm that the " +
-                "service was removed or pending deletion.", details, exitCode);
+                "服务卸载命令已完成，但 Windows 未确认服务已删除" +
+                "或待删除。", details, exitCode);
         }
     }
 
@@ -234,17 +234,17 @@ namespace ProxiFyreUI.Infrastructure
         {
             switch (State)
             {
-                case ProxiFyreServiceState.NotInstalled: return "Not installed";
-                case ProxiFyreServiceState.Stopped: return "Stopped";
-                case ProxiFyreServiceState.StartPending: return "Start pending";
-                case ProxiFyreServiceState.Running: return "Running";
-                case ProxiFyreServiceState.StopPending: return "Stop pending";
-                case ProxiFyreServiceState.Paused: return "Paused";
-                case ProxiFyreServiceState.PausePending: return "Pause pending";
-                case ProxiFyreServiceState.ContinuePending: return "Continue pending";
-                case ProxiFyreServiceState.DeletionPending: return "Deletion pending";
-                case ProxiFyreServiceState.Error: return "Error";
-                default: return "Unknown";
+                case ProxiFyreServiceState.NotInstalled: return "未安装";
+                case ProxiFyreServiceState.Stopped: return "已停止";
+                case ProxiFyreServiceState.StartPending: return "正在启动";
+                case ProxiFyreServiceState.Running: return "运行中";
+                case ProxiFyreServiceState.StopPending: return "正在停止";
+                case ProxiFyreServiceState.Paused: return "已暂停";
+                case ProxiFyreServiceState.PausePending: return "正在暂停";
+                case ProxiFyreServiceState.ContinuePending: return "正在继续";
+                case ProxiFyreServiceState.DeletionPending: return "待删除";
+                case ProxiFyreServiceState.Error: return "错误";
+                default: return "未知";
             }
         }
     }
@@ -389,9 +389,9 @@ namespace ProxiFyreUI.Infrastructure
             if (!status.IsInstallationKnown)
                 return InstallationStateUnavailable(status);
             if (!status.IsInstalled)
-                return ServiceOperationResult.Failed(status, "The ProxiFyre service is not installed.");
+                return ServiceOperationResult.Failed(status, "ProxiFyre 服务未安装。");
             if (status.State == ProxiFyreServiceState.Running)
-                return ServiceOperationResult.Completed(status, "The ProxiFyre service is already running.");
+                return ServiceOperationResult.Completed(status, "ProxiFyre 服务已在运行。");
 
             LifecycleExecutableLease payloadLease;
             try
@@ -400,7 +400,7 @@ namespace ProxiFyreUI.Infrastructure
             }
             catch (Exception ex) when (IsPayloadValidationException(ex))
             {
-                return FailureFromException("The service could not be started.", ex, cancellationToken);
+                return FailureFromException("无法启动服务。", ex, cancellationToken);
             }
 
             using (payloadLease)
@@ -422,7 +422,7 @@ namespace ProxiFyreUI.Infrastructure
                 catch (Exception ex) when (IsServiceException(ex))
                 {
                     // Keep the verified payload leased while the final failure status is read.
-                    return FailureFromException("The service could not be started.", ex,
+                    return FailureFromException("无法启动服务。", ex,
                         cancellationToken);
                 }
             }
@@ -435,9 +435,9 @@ namespace ProxiFyreUI.Infrastructure
             if (!status.IsInstallationKnown)
                 return InstallationStateUnavailable(status);
             if (!status.IsInstalled)
-                return ServiceOperationResult.Failed(status, "The ProxiFyre service is not installed.");
+                return ServiceOperationResult.Failed(status, "ProxiFyre 服务未安装。");
             if (status.State == ProxiFyreServiceState.Running)
-                return ServiceOperationResult.Completed(status, "The ProxiFyre service is already running.");
+                return ServiceOperationResult.Completed(status, "ProxiFyre 服务已在运行。");
 
             using (var controller = new ServiceController(ProxiFyrePaths.ServiceName))
             {
@@ -445,33 +445,33 @@ namespace ProxiFyreUI.Infrastructure
                     () => operationClock.Elapsed, preLaunchGuard);
                 if (launchDecision == ServicePreLaunchDecision.TimedOut)
                     return ServiceOperationResult.Failed(status,
-                        "The start operation timed out before the service could be started.",
+                        "启动操作在服务启动前已超时。",
                         null, null, true);
                 if (launchDecision == ServicePreLaunchDecision.GuardRejected)
                 {
                     return ServiceOperationResult.Failed(status,
-                        "The registered ProxiFyre executable changed before the service could be started. " +
-                        "No start request was sent.");
+                        "已注册的 ProxiFyre 可执行文件在服务启动前已更改。" +
+                        "未发送启动请求。");
                 }
                 controller.Start();
                 var remaining = ServiceOperationBudget.Remaining(timeout, operationClock.Elapsed);
                 if (remaining <= TimeSpan.Zero)
                 {
                     return ServiceOperationResult.Failed(GetStatusCore(cancellationToken),
-                        "The service did not reach Running before the timeout.", null, null, true);
+                        "服务未在超时前进入“运行中”。", null, null, true);
                 }
                 var startup = WaitForStartup(controller, remaining, cancellationToken);
                 if (startup == ServiceStartupWaitResult.TimedOut)
                 {
                     var current = GetStatusCore(cancellationToken);
                     return ServiceOperationResult.Failed(current,
-                        "The service did not reach Running before the timeout.", null, null, true);
+                        "服务未在超时前进入“运行中”。", null, null, true);
                 }
                 if (startup == ServiceStartupWaitResult.Failed)
                 {
                     var current = GetStatusCore(cancellationToken);
                     return ServiceOperationResult.Failed(current,
-                        "The service stopped during startup. Review the recent engine logs for the underlying error.",
+                        "服务在启动过程中停止。请查看最近的引擎日志以了解根本错误。",
                         null, null, false, ServiceOperationFailureKind.StartupFailed);
                 }
             }
@@ -486,9 +486,9 @@ namespace ProxiFyreUI.Infrastructure
             if (!status.IsInstallationKnown)
                 return InstallationStateUnavailable(status);
             if (!status.IsInstalled)
-                return ServiceOperationResult.Failed(status, "The ProxiFyre service is not installed.");
+                return ServiceOperationResult.Failed(status, "ProxiFyre 服务未安装。");
             if (status.State == ProxiFyreServiceState.Stopped)
-                return ServiceOperationResult.Completed(status, "The ProxiFyre service is already stopped.");
+                return ServiceOperationResult.Completed(status, "ProxiFyre 服务已停止。");
 
             try
             {
@@ -507,14 +507,14 @@ namespace ProxiFyreUI.Infrastructure
                         if (stopDecision == ServicePreLaunchDecision.TimedOut)
                         {
                             return ServiceOperationResult.Failed(GetStatusCore(cancellationToken),
-                                "The stop operation timed out before the service could be stopped.",
+                                "停止操作在服务停止前已超时。",
                                 null, null, true);
                         }
                         if (stopDecision == ServicePreLaunchDecision.GuardRejected)
                         {
                             return ServiceOperationResult.Failed(GetStatusCore(cancellationToken),
-                                "The registered ProxiFyre executable changed before the service could be stopped. " +
-                                "No stop request was sent.");
+                                "已注册的 ProxiFyre 可执行文件在服务停止前已更改。" +
+                                "未发送停止请求。");
                         }
                         controller.Stop();
                     }
@@ -526,7 +526,7 @@ namespace ProxiFyreUI.Infrastructure
                     {
                         var current = GetStatusCore(cancellationToken);
                         return ServiceOperationResult.Failed(current,
-                            "The service did not reach Stopped before the timeout.", null, null, true);
+                            "服务未在超时前进入“已停止”。", null, null, true);
                     }
                 }
 
@@ -534,7 +534,7 @@ namespace ProxiFyreUI.Infrastructure
             }
             catch (Exception ex) when (IsServiceException(ex))
             {
-                return FailureFromException("The service could not be stopped.", ex, cancellationToken);
+                return FailureFromException("无法停止服务。", ex, cancellationToken);
             }
         }
 
@@ -546,7 +546,7 @@ namespace ProxiFyreUI.Infrastructure
             if (!status.IsInstallationKnown)
                 return InstallationStateUnavailable(status);
             if (!status.IsInstalled)
-                return ServiceOperationResult.Failed(status, "The ProxiFyre service is not installed.");
+                return ServiceOperationResult.Failed(status, "ProxiFyre 服务未安装。");
 
             LifecycleExecutableLease payloadLease;
             try
@@ -555,7 +555,7 @@ namespace ProxiFyreUI.Infrastructure
             }
             catch (Exception ex) when (IsPayloadValidationException(ex))
             {
-                return FailureFromException("The service could not be restarted.", ex,
+                return FailureFromException("无法重启服务。", ex,
                     cancellationToken);
             }
 
@@ -580,7 +580,7 @@ namespace ProxiFyreUI.Infrastructure
                         if (stopBudget <= TimeSpan.Zero)
                         {
                             return ServiceOperationResult.Failed(status,
-                                "The restart operation timed out before the service could be stopped.",
+                                "重启操作在服务停止前已超时。",
                                 null, null, true);
                         }
                         var stop = StopCore(timeout, started, cancellationToken, preLaunchGuard);
@@ -591,20 +591,20 @@ namespace ProxiFyreUI.Infrastructure
                     var remaining = ServiceOperationBudget.Remaining(timeout, started.Elapsed);
                     if (remaining <= TimeSpan.Zero)
                         return ServiceOperationResult.Failed(GetStatusCore(cancellationToken),
-                            "The restart operation timed out before the service could start.", null, null, true);
+                            "重启操作在服务启动前已超时。", null, null, true);
 
                     var start = StartVerifiedCore(preLaunchGuard, timeout, started,
                         cancellationToken);
                     return start.Success
                         ? ServiceOperationResult.Completed(start.Status,
-                            "The ProxiFyre service restarted successfully.",
+                            "ProxiFyre 服务已成功重启。",
                             confirmsConfigurationReloaded: start.ConfirmsConfigurationReloaded)
                         : start;
                 }
                 catch (Exception ex) when (IsServiceException(ex))
                 {
                     // Keep the verified payload leased while the final failure status is read.
-                    return FailureFromException("The service could not be restarted.", ex,
+                    return FailureFromException("无法重启服务。", ex,
                         cancellationToken);
                 }
             }
@@ -620,12 +620,12 @@ namespace ProxiFyreUI.Infrastructure
             if (status.State == ProxiFyreServiceState.DeletionPending)
             {
                 return ServiceOperationResult.Failed(status,
-                    "The ProxiFyre service is marked for deletion. Wait for Windows to finish removing it before installing again.");
+                    "ProxiFyre 服务已标记为待删除。请等待 Windows 完成删除后再安装。");
             }
             if (status.IsInstalled)
             {
                 return ServiceOperationResult.Completed(status,
-                    "The ProxiFyre service is already installed.");
+                    "ProxiFyre 服务已安装。");
             }
 
             LifecycleExecutableLease payloadLease;
@@ -635,7 +635,7 @@ namespace ProxiFyreUI.Infrastructure
             }
             catch (Exception ex) when (IsPayloadValidationException(ex))
             {
-                return FailureFromException("The service could not be installed.", ex,
+                return FailureFromException("无法安装服务。", ex,
                     cancellationToken);
             }
 
@@ -662,13 +662,13 @@ namespace ProxiFyreUI.Infrastructure
             if (status.State == ProxiFyreServiceState.NotInstalled)
             {
                 return ServiceOperationResult.Completed(status,
-                    "The ProxiFyre service is already uninstalled. Configuration and logs were preserved.");
+                    "ProxiFyre 服务已卸载。配置和日志已保留。");
             }
             if (status.State == ProxiFyreServiceState.DeletionPending)
             {
                 return ServiceOperationResult.Completed(status,
-                    "The ProxiFyre service is already marked for deletion. Windows will finish " +
-                    "removing it after open service-management handles close.");
+                    "ProxiFyre 服务已标记为待删除。Windows 将在打开的" +
+                    "服务管理句柄关闭后完成删除。");
             }
 
             LifecycleExecutableLease payloadLease;
@@ -678,7 +678,7 @@ namespace ProxiFyreUI.Infrastructure
             }
             catch (Exception ex) when (IsPayloadValidationException(ex))
             {
-                return FailureFromException("The service uninstall command could not be run.", ex,
+                return FailureFromException("无法运行服务卸载命令。", ex,
                     cancellationToken);
             }
 
@@ -698,7 +698,7 @@ namespace ProxiFyreUI.Infrastructure
                     if (stopBudget <= TimeSpan.Zero)
                     {
                         return ServiceOperationResult.Failed(status,
-                            "The uninstall operation timed out before the service could be stopped.",
+                            "卸载操作在服务停止前已超时。",
                             null, null, true);
                     }
 
@@ -712,21 +712,21 @@ namespace ProxiFyreUI.Infrastructure
                     {
                         return ServiceOperationResult.Completed(status,
                             status.State == ProxiFyreServiceState.NotInstalled
-                                ? "The ProxiFyre service is already uninstalled. Configuration and logs were preserved."
-                                : "The ProxiFyre service is already marked for deletion. Windows will finish " +
-                                  "removing it after open service-management handles close.");
+                                ? "ProxiFyre 服务已卸载。配置和日志已保留。"
+                                : "ProxiFyre 服务已标记为待删除。Windows 将在打开的" +
+                                  "服务管理句柄关闭后完成删除。");
                     }
                     if (status.State != ProxiFyreServiceState.Stopped)
                     {
                         return ServiceOperationResult.Failed(status,
-                            "The service did not remain stopped, so the uninstall command was not run.");
+                            "服务未能保持停止状态，因此未运行卸载命令。");
                     }
                 }
 
                 if (ServiceOperationBudget.Remaining(timeout, started.Elapsed) <= TimeSpan.Zero)
                 {
                     return ServiceOperationResult.Failed(status,
-                        "The uninstall operation timed out before the uninstall command could be run.",
+                        "卸载操作在卸载命令运行前已超时。",
                         null, null, true);
                 }
 
@@ -783,8 +783,8 @@ namespace ProxiFyreUI.Infrastructure
                     if (launchDecision == ServicePreLaunchDecision.GuardRejected)
                     {
                         return ServiceOperationResult.Failed(GetStatusCore(cancellationToken),
-                            "The service registration changed before the uninstall command could run. " +
-                            "No uninstall command was launched.");
+                            "服务注册在卸载命令运行前已更改。" +
+                            "未启动卸载命令。");
                     }
                     process.Start();
                     process.BeginOutputReadLine();
@@ -812,7 +812,7 @@ namespace ProxiFyreUI.Infrastructure
                         TerminateLifecycleProcess(process);
                         var timedOutStatus = GetStatusCore(CancellationToken.None);
                         return ServiceOperationResult.Failed(timedOutStatus,
-                            $"The service {command} command timed out.", CombineOutput(output, error), null, true);
+                            $"服务 {command} 命令已超时。", CombineOutput(output, error), null, true);
                     }
 
                     process.WaitForExit();
@@ -828,16 +828,16 @@ namespace ProxiFyreUI.Infrastructure
                     if (exitCode == 0 && status.HasConcreteInstalledState)
                     {
                         return ServiceOperationResult.Completed(status,
-                            "The ProxiFyre service was installed.", details, exitCode);
+                            "ProxiFyre 服务已安装。", details, exitCode);
                     }
 
                     return ServiceOperationResult.Failed(status,
-                        $"The service {command} command failed.", details, exitCode);
+                        $"服务 {command} 命令失败。", details, exitCode);
                 }
             }
             catch (Exception ex) when (IsServiceException(ex) || IsPayloadValidationException(ex))
             {
-                return FailureFromException($"The service {command} command could not be run.", ex, cancellationToken);
+                return FailureFromException($"无法运行服务 {command} 命令。", ex, cancellationToken);
             }
         }
 
@@ -845,7 +845,7 @@ namespace ProxiFyreUI.Infrastructure
             CancellationToken cancellationToken)
         {
             return ServiceOperationResult.Failed(GetStatusCore(cancellationToken),
-                $"The service {command} command timed out before it could be launched.",
+                $"服务 {command} 命令在启动前已超时。",
                 null, null, true);
         }
 
@@ -888,7 +888,7 @@ namespace ProxiFyreUI.Infrastructure
         private static ServiceOperationResult InstallationStateUnavailable(ServiceStatusInfo status)
         {
             return ServiceOperationResult.Failed(status,
-                "The ProxiFyre service installation state could not be verified.");
+                "无法确认 ProxiFyre 服务的安装状态。");
         }
 
         private ServiceOperationResult FailureFromException(string message, Exception exception, CancellationToken cancellationToken)
@@ -908,15 +908,15 @@ namespace ProxiFyreUI.Infrastructure
             if (native != null)
             {
                 if (native.NativeErrorCode == 5)
-                    return prefix + " Access was denied; run ProxiFyreUI as administrator.";
+                    return prefix + " 访问被拒绝；请以管理员身份运行 ProxiFyreUI。";
                 if (native.NativeErrorCode == 1072)
-                    return prefix + " The service is marked for deletion; close service-management tools and retry.";
+                    return prefix + " 服务已标记为待删除；请关闭服务管理工具后重试。";
                 if (native.NativeErrorCode == 2)
-                    return prefix + " The registered service executable could not be found.";
+                    return prefix + " 找不到已注册的服务可执行文件。";
                 if (native.NativeErrorCode == 1068 || native.NativeErrorCode == 1075)
-                    return prefix + " The Windows Packet Filter (NDISRD) dependency is unavailable. " +
-                           "Install WinpkFilter from " + WindowsPacketFilterStatus.DownloadUrl +
-                           ", restart Windows if requested, and try again.";
+                    return prefix + " Windows Packet Filter (NDISRD) 依赖不可用。" +
+                           "请从 " + WindowsPacketFilterStatus.DownloadUrl +
+                           " 安装 WinpkFilter，如提示请重启 Windows，然后重试。";
             }
 
             return prefix + " " + exception.Message;
@@ -1055,21 +1055,19 @@ namespace ProxiFyreUI.Infrastructure
                 return null;
 
             var remediation = isUninstall
-                ? "For an MSI installation, remove ProxiFyre from Windows Installed apps. " +
-                  "For a manual service, place an official complete release in an " +
-                  "administrator-protected fixed-volume directory, then retry the uninstall."
+                ? "对于 MSI 安装，请从 Windows 已安装应用中移除 ProxiFyre。" +
+                  "对于手动服务，请将官方完整版本放入受管理员保护的" +
+                  "固定卷目录，然后重试卸载。"
                 : status != null && status.IsInstalled
-                ? "Stop and uninstall the existing service, exit this GUI, then copy or extract " +
-                  "the complete release using the official installer into a protected per-machine " +
-                  "directory (normally under Program Files). Launch the GUI from that copy and " +
-                  "install the service again."
-                : "Install the complete release with the official installer into a protected " +
-                  "per-machine directory (normally under Program Files), launch the GUI from " +
-                  "that copy, and install the service. The GUI will not rewrite permissions on " +
-                  "a user-controlled directory in place.";
+                ? "请停止并卸载现有服务，退出此 GUI，然后使用官方安装程序将完整版本复制或解压到" +
+                  "受保护的每计算机目录（通常位于 Program Files 下）。从该副本启动 GUI，" +
+                  "并重新安装服务。"
+                : "请使用官方安装程序将完整版本安装到受保护的每计算机目录" +
+                  "（通常位于 Program Files 下），从该副本启动 GUI，" +
+                  "并安装服务。GUI 不会就地改写用户控制目录的权限。";
             return ServiceOperationResult.Failed(status,
-                "A privileged ProxiFyre service operation cannot execute code from a location writable by " +
-                "standard users. " + remediation, reason);
+                "特权 ProxiFyre 服务操作无法从标准用户可写的" +
+                "位置执行代码。" + remediation, reason);
 #endif
         }
 
@@ -1088,7 +1086,7 @@ namespace ProxiFyreUI.Infrastructure
                 !IsFullyQualifiedWindowsPath(enginePath))
             {
                 throw new ArgumentException(
-                    "A fully qualified ProxiFyre.exe path is required.", nameof(enginePath));
+                    "需要完整的 ProxiFyre.exe 路径。", nameof(enginePath));
             }
 
             // Force the same canonicalization checks used by the payload lease without requiring

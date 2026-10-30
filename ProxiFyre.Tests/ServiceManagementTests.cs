@@ -128,7 +128,7 @@ namespace ProxiFyre.Tests
                 new ServiceStatusInfo(state), null, 0);
 
             Assert.That(result.Message, Does.Contain("Windows"));
-            Assert.That(result.Message, Does.Contain("remov").IgnoreCase);
+            Assert.That(result.Message, Does.Contain("删除").IgnoreCase);
         }
 
         [Test]
@@ -166,7 +166,7 @@ namespace ProxiFyre.Tests
                 Assert.That(result.Success, Is.False);
                 Assert.That(result.Status, Is.SameAs(stopped));
                 Assert.That(result.FailureKind, Is.EqualTo(ServiceOperationFailureKind.StartupFailed));
-                Assert.That(result.Message, Does.Contain("final Running state could not be confirmed"));
+                Assert.That(result.Message, Does.Contain("最终运行状态"));
             });
         }
 
@@ -431,7 +431,7 @@ namespace ProxiFyre.Tests
             {
                 Assert.That(dependency.IsAvailable, Is.False);
                 Assert.That(dependency.NativeErrorCode, Is.EqualTo(2));
-                Assert.That(dependency.Details, Does.Contain("service is not installed"));
+                Assert.That(dependency.Details, Does.Contain("服务未安装"));
                 Assert.That(dependency.StartupMessage,
                     Does.Contain(WindowsPacketFilterStatus.DownloadUrl));
             });
@@ -447,7 +447,7 @@ namespace ProxiFyre.Tests
             var dependency = probe.GetStatus();
 
             Assert.That(dependency.IsAvailable, Is.False);
-            Assert.That(dependency.Details, Does.Contain("service is not installed"));
+            Assert.That(dependency.Details, Does.Contain("服务未安装"));
         }
 
         [TestCase(1068)]

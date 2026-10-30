@@ -582,7 +582,7 @@ namespace ProxiFyre.Tests
                     Assert.That(result.Outcome,
                         Is.EqualTo(ConfigurationApplyOutcome.ServiceStatusUnavailable));
                     Assert.That(result.ServiceResult.Success, Is.False);
-                    Assert.That(result.ServiceResult.Message, Does.Contain("marked for deletion"));
+                    Assert.That(result.ServiceResult.Message, Does.Contain("已标记为待删除"));
                     Assert.That(service.InstallCalls, Is.Zero);
                     Assert.That(service.StartCalls, Is.Zero);
                     Assert.That(service.RestartCalls, Is.Zero);

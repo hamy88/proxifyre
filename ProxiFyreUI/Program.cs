@@ -51,24 +51,24 @@ namespace ProxiFyreUI
                 using (var writer = new StreamWriter(logPath, false,
                     new UTF8Encoding(false)))
                 {
-                    writer.WriteLine("ProxiFyre UI managed startup failure");
-                    writer.WriteLine("UTC: " + DateTime.UtcNow.ToString("O",
+                    writer.WriteLine("ProxiFyre UI 托管启动失败");
+                    writer.WriteLine("UTC：" + DateTime.UtcNow.ToString("O",
                         CultureInfo.InvariantCulture));
-                    writer.WriteLine("CLR: " + Environment.Version);
-                    writer.WriteLine("Process architecture: " +
+                    writer.WriteLine("CLR：" + Environment.Version);
+                    writer.WriteLine("进程架构：" +
                         (IntPtr.Size == 8 ? "x64" : "x86"));
 
                     var current = exception;
                     for (var depth = 0; current != null && depth < 8; depth++)
                     {
                         writer.WriteLine(string.Format(CultureInfo.InvariantCulture,
-                            "Exception[{0}]: {1}; HRESULT=0x{2:X8}", depth,
+                            "异常[{0}]：{1}；HRESULT=0x{2:X8}", depth,
                             current.GetType().FullName, current.HResult));
                         current = current.InnerException;
                     }
 
-                    writer.WriteLine("Stack trace (messages omitted):");
-                    writer.WriteLine(exception.StackTrace ?? "Not available");
+                    writer.WriteLine("堆栈跟踪（省略消息）：");
+                    writer.WriteLine(exception.StackTrace ?? "不可用");
                 }
             }
             catch
@@ -96,8 +96,8 @@ namespace ProxiFyreUI
             catch
             {
                 MessageBox.Show(
-                    "The ProxiFyre UI payload is incomplete or failed its local integrity check. Reinstall it from an official ProxiFyre package.",
-                    "ProxiFyre UI integrity check", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    "ProxiFyre UI 负载不完整，或未通过本地完整性检查。请使用官方 ProxiFyre 软件包重新安装。",
+                    "ProxiFyre UI 完整性检查", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -172,7 +172,7 @@ namespace ProxiFyreUI
             // Fail closed instead of surfacing arbitrary exception text that could contain a
             // password copied into a third-party/OS exception message.
             MessageBox.Show(
-                "An unexpected ProxiFyre UI error occurred. Restart the application and review the redacted diagnostics and service logs.",
+                "ProxiFyre UI 发生意外错误。请重启应用程序，并检查脱敏后的诊断信息和服务日志。",
                 "ProxiFyre UI", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }

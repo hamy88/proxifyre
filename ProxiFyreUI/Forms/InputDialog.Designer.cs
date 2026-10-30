@@ -27,7 +27,7 @@ namespace ProxiFyreUI.Forms
             this.promptLabel.Name = "promptLabel";
             this.promptLabel.Size = new System.Drawing.Size(42, 15);
             this.promptLabel.TabIndex = 0;
-            this.promptLabel.Text = "Value:";
+            this.promptLabel.Text = "值：";
             this.valueTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.valueTextBox.Location = new System.Drawing.Point(15, 42);
             this.valueTextBox.Name = "valueTextBox";
@@ -41,7 +41,7 @@ namespace ProxiFyreUI.Forms
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 27);
             this.okButton.TabIndex = 2;
-            this.okButton.Text = "OK";
+            this.okButton.Text = "确定";
             this.okButton.UseVisualStyleBackColor = true;
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
@@ -49,7 +49,7 @@ namespace ProxiFyreUI.Forms
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 27);
             this.cancelButton.TabIndex = 3;
-            this.cancelButton.Text = "Cancel";
+            this.cancelButton.Text = "取消";
             this.cancelButton.UseVisualStyleBackColor = true;
             this.AcceptButton = this.okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -67,7 +67,7 @@ namespace ProxiFyreUI.Forms
             this.Name = "InputDialog";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Enter value";
+            this.Text = "输入值";
             this.ResumeLayout(false);
             this.PerformLayout();
         }

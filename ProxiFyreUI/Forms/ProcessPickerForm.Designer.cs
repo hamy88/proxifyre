@@ -43,7 +43,7 @@ namespace ProxiFyreUI.Forms
             this.searchLabel.Name = "searchLabel";
             this.searchLabel.Size = new System.Drawing.Size(45, 15);
             this.searchLabel.TabIndex = 0;
-            this.searchLabel.Text = "Search:";
+            this.searchLabel.Text = "搜索：";
             this.searchTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
             this.searchTextBox.Location = new System.Drawing.Point(63, 12);
             this.searchTextBox.Name = "searchTextBox";
@@ -55,7 +55,7 @@ namespace ProxiFyreUI.Forms
             this.refreshButton.Name = "refreshButton";
             this.refreshButton.Size = new System.Drawing.Size(84, 27);
             this.refreshButton.TabIndex = 2;
-            this.refreshButton.Text = "Refresh";
+            this.refreshButton.Text = "刷新";
             this.refreshButton.UseVisualStyleBackColor = true;
             this.refreshButton.Click += new System.EventHandler(this.RefreshButton_Click);
             this.processGrid.AllowUserToAddRows = false;
@@ -77,7 +77,7 @@ namespace ProxiFyreUI.Forms
             this.processGrid.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ProcessGrid_CellDoubleClick);
             this.processGrid.SelectionChanged += new System.EventHandler(this.ProcessGrid_SelectionChanged);
             this.nameColumn.FillWeight = 25F;
-            this.nameColumn.HeaderText = "Process name";
+            this.nameColumn.HeaderText = "进程名称";
             this.nameColumn.Name = "nameColumn";
             this.nameColumn.ReadOnly = true;
             this.idColumn.FillWeight = 12F;
@@ -85,7 +85,7 @@ namespace ProxiFyreUI.Forms
             this.idColumn.Name = "idColumn";
             this.idColumn.ReadOnly = true;
             this.pathColumn.FillWeight = 63F;
-            this.pathColumn.HeaderText = "Executable path";
+            this.pathColumn.HeaderText = "可执行文件路径";
             this.pathColumn.Name = "pathColumn";
             this.pathColumn.ReadOnly = true;
             this.useFullPathCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -94,7 +94,7 @@ namespace ProxiFyreUI.Forms
             this.useFullPathCheckBox.Name = "useFullPathCheckBox";
             this.useFullPathCheckBox.Size = new System.Drawing.Size(240, 19);
             this.useFullPathCheckBox.TabIndex = 4;
-            this.useFullPathCheckBox.Text = "Use full executable path when available";
+            this.useFullPathCheckBox.Text = "可用时使用完整可执行文件路径";
             this.useFullPathCheckBox.UseVisualStyleBackColor = true;
             this.progressBar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.progressBar.Location = new System.Drawing.Point(12, 470);
@@ -109,7 +109,7 @@ namespace ProxiFyreUI.Forms
             this.statusLabel.Name = "statusLabel";
             this.statusLabel.Size = new System.Drawing.Size(437, 18);
             this.statusLabel.TabIndex = 6;
-            this.statusLabel.Text = "Enumerating running processes…";
+            this.statusLabel.Text = "正在枚举运行中的进程…";
             this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.okButton.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.okButton.Enabled = false;
@@ -117,7 +117,7 @@ namespace ProxiFyreUI.Forms
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 27);
             this.okButton.TabIndex = 7;
-            this.okButton.Text = "Add";
+            this.okButton.Text = "添加";
             this.okButton.UseVisualStyleBackColor = true;
             this.cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
@@ -125,7 +125,7 @@ namespace ProxiFyreUI.Forms
             this.cancelButton.Name = "cancelButton";
             this.cancelButton.Size = new System.Drawing.Size(75, 27);
             this.cancelButton.TabIndex = 8;
-            this.cancelButton.Text = "Cancel";
+            this.cancelButton.Text = "取消";
             this.cancelButton.UseVisualStyleBackColor = true;
             this.AcceptButton = this.okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -147,7 +147,7 @@ namespace ProxiFyreUI.Forms
             this.Name = "ProcessPickerForm";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Add running process";
+            this.Text = "添加运行中进程";
             ((System.ComponentModel.ISupportInitialize)(this.processGrid)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
