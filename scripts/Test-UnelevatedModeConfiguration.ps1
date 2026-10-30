@@ -195,7 +195,7 @@ if ($RunCommandLineSmokeTest) {
             "ERROR_INVALID_PARAMETER (87), got $LASTEXITCODE. $conflictingOutput")
     }
     if (-not $conflictingOutput.Contains(
-            'run, install, uninstall, start, stop, or command',
+            'run、install、uninstall、start、stop 或 command 中的一个',
             [StringComparison]::Ordinal)) {
         throw "The conflicting-command diagnostic omits a supported verb. $conflictingOutput"
     }
