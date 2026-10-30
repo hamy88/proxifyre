@@ -4,7 +4,7 @@ ProxiFyre 从已解析的 `ProxiFyre.exe` 所在目录读取 `app-config.json`�
 
 配置更改不会影响正在运行的服务。请在 GUI 中使用**应用并重启**，或在手动编辑文件后重启 `ProxiFyreService`。
 
-## 可选的非提权控制台模式
+## Optional unelevated console mode
 
 普通 GUI 和 Windows 服务工作流仍保持提权运行。便携式管理器可以改为在明确受限的交互式控制台模式下启动引擎：
 

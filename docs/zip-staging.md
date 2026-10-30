@@ -1,24 +1,24 @@
-# Manually staging a Release ZIP
+# 手动暂存 Release ZIP
 
-The ZIP contains the application payload. Install the architecture-matched .NET Framework, Visual C++ runtime, and Windows Packet Filter first; see the [installer prerequisites](installer.md). Setup remains the recommended deployment method. ZIP staging does not create shortcuts, firewall rules, or a service registration. After staging, open `ProxiFyreUI.exe`, configure the engine, and use **Install Service** if needed.
+ZIP 包含应用程序负载。请先安装架构匹配的 .NET Framework、Visual C++ 运行时和 Windows Packet Filter；参见[安装程序前置依赖](installer.md)。Setup 仍是推荐的部署方式。ZIP 暂存不会创建快捷方式、防火墙规则或服务注册。暂存完成后，打开 `ProxiFyreUI.exe`，配置引擎，并在需要时使用**安装服务**。
 
-## Ownership and permissions
+## 所有权与权限
 
-A Release GUI can run from a non-default directory on a directly mounted fixed local volume. The launcher checks the whole directory chain, including the volume root, and the required payload files. It rejects reparse points, user-controlled paths, unexpected executable modules, and modified pinned configuration files. A directory under `Program Files` is not automatically trusted.
+Release 界面可以从直接挂载的固定本地卷上的非默认目录运行。启动器检查整个目录链（包括卷根目录）和所需的负载文件。它会拒绝重解析点、用户控制的路径、意外的可执行模块和被修改的固定配置文件。位于 `Program Files` 下的目录并不会自动受信任。
 
-Accepted owners are `SYSTEM` (`S-1-5-18`), the built-in **Administrators group** (`S-1-5-32-544`), and `TrustedInstaller` (`S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464`). An individual administrator's account SID is not an accepted owner. Elevating the launcher does not change file ownership. `icacls /reset` resets inherited permissions; it does not set the owner.
+可接受的所有者是 `SYSTEM`（`S-1-5-18`）、内置的 **Administrators 组**（`S-1-5-32-544`）和 `TrustedInstaller`（`S-1-5-80-956008885-3418522649-1831038044-1853292631-2271478464`）。单个管理员账户的 SID 不是可接受的所有者。提升启动器不会更改文件所有权。`icacls /reset` 重置继承的权限；它不会设置所有者。
 
-Use the same application-directory policy as the MSI: Administrators own the directory; SYSTEM and Administrators have full control; Users have read/execute access. The recipe also adds an inheritable **OWNER RIGHTS** read-control ACE. This suppresses the owner's implicit permission to change the DACL, protecting new files and subdirectories even when their initial owner is the extracting account. The final ownership pass then sets Administrators as owner throughout. Without that ACE, another unelevated process running as the extracting user could grant itself write access before ownership is changed. Files and subdirectories must satisfy both the permissions and trusted-owner checks. The parent chain must not grant other identities delete, delete-child, generic write/all, or permission/ownership-control access.
+请使用与 MSI 相同的应用目录策略：Administrators 拥有目录；SYSTEM 和 Administrators 拥有完全控制；Users 拥有读取/执行访问权。该配方还添加一个可继承的 **OWNER RIGHTS** 读取控制 ACE。这会抑制所有者更改 DACL 的隐式权限，在新文件和子目录的初始所有者是解压账户时仍然保护它们。最后的所有权处理再把 Administrators 设置为所有内容的所有者。如果没有该 ACE，另一个以解压用户身份运行的非提权进程可以在所有权变更前给自己授予写入权限。文件和子目录必须同时满足权限和受信任所有者检查。父链不得授予其他身份删除、删除子项、通用写入/全部，或权限/所有权控制访问权。
 
-Always create a fresh protected destination **before** extracting. Do not move an existing user-owned extraction into place or tighten its permissions afterward: another process could retain a previously opened mutation handle. Do not recursively reset permissions or take ownership of `Program Files` or a drive root. If a parent fails validation, have its administrator restore the correct Windows or organizational baseline.
+请务必在解压**之前**创建一个新的受保护目标目录。不要把现有的用户所有解压目录移动到位，也不要在事后收紧其权限：另一个进程可能保留先前打开的修改句柄。不要递归重置权限或获取 `Program Files` 或驱动器根目录的所有权。如果父目录未通过验证，请让其管理员恢复正确的 Windows 或组织基线。
 
-## Copyable staging procedure
+## 可复制的暂存流程
 
-Download the architecture-matched application ZIP and its `.sha256` sidecar from the same [official release](https://github.com/wiresock/proxifyre/releases). Obtain the expected 64-character hash from that sidecar and verify it before elevation. Keep the archive intact; the script checks the hash again while holding the archive open without write/delete sharing.
+从同一[官方发布](https://github.com/wiresock/proxifyre/releases)下载架构匹配的应用程序 ZIP 及其 `.sha256` 副文件。从该副文件获取预期的 64 字符哈希，并在提权前验证它。保持归档完整；脚本会在以无写入/删除共享方式保持归档打开时再次检查哈希。
 
-Save the following as `Stage-ProxiFyreZip.ps1`. Run it in **Windows PowerShell 5.1 as Administrator**, using the native architecture of Windows. It uses Windows directory creation to apply ownership and a protected ACL atomically and refuse an existing destination, including one created concurrently. PowerShell 7 is not supported by this recipe.
+将以下内容保存为 `Stage-ProxiFyreZip.ps1`。以**管理员身份在 Windows PowerShell 5.1** 中运行它，使用 Windows 的原生架构。它使用 Windows 目录创建来原子地应用所有权和受保护的 ACL，并拒绝已存在的目标目录（包括并发创建的目标目录）。此配方不支持 PowerShell 7。
 
-The destination is a new direct child of the system Program Files folder, named `ProxiFyre-Portable` by default. Use `-DestinationName ProxiFyre-Manual` for another name. Other fixed-volume locations can satisfy the application policy, but require an equally protected parent chain; this recipe deliberately confines staging to Program Files.
+目标目录是系统 Program Files 文件夹下名为 `ProxiFyre-Portable` 的新直接子目录。要使用其他名称，请用 `-DestinationName ProxiFyre-Manual`。其他固定卷位置可以满足应用策略，但需要同样受保护的父链；此配方有意把暂存限制在 Program Files。
 
 <!-- zip-staging-script -->
 ```powershell
@@ -167,7 +167,7 @@ finally {
 }
 ```
 
-For example, after substituting the release version, archive path, and published hash:
+例如，替换发布版本、归档路径和已发布哈希后：
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Stage-ProxiFyreZip.ps1 `
@@ -175,20 +175,20 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Stage-ProxiFyreZip.ps1
     -ExpectedSha256 '<64-character hash from the official .sha256 sidecar>'
 ```
 
-The example sets execution policy for that process only so a locally reviewed script can run on clients whose default policy is Restricted. Organizational Group Policy can still prevent execution; follow your administrator's policy in that case.
+该示例只为该进程设置执行策略，这样本地审查过的脚本就能在默认策略为 Restricted 的客户端上运行。组织组策略仍可能阻止执行；这种情况下请遵循管理员的策略。
 
-If extraction or ownership assignment fails, the script attempts to remove only the new destination it created. If cleanup also fails, it reports the remaining path; do not launch that partial payload. Inspect the failure before retrying. The script does not change any parent ACL, replace an existing installation, or repair an existing extraction.
+如果解压或所有权分配失败，脚本会尝试只删除它创建的新目标目录。如果清理也失败，它会报告剩余路径；不要启动那个不完整的负载。重试前请检查失败原因。脚本不会更改任何父 ACL、替换现有安装或修复现有解压。
 
-## Checking the result
+## 检查结果
 
-Inspect the destination and file owners with `Get-Acl` and permissions with `icacls`. Open the staged `ProxiFyreUI.exe`; the Release launcher and service controls still perform their full security and integrity checks. Preserve the shipped `ProxiFyreUI.exe.config`, `ProxiFyre.exe.config`, and `NLog.config` bytes. Edit routing and log verbosity through `app-config.json` or the GUI.
+用 `Get-Acl` 检查目录和文件所有者，用 `icacls` 检查权限。打开暂存后的 `ProxiFyreUI.exe`；Release 启动器和服务控件仍会执行完整的完整性和安全检查。保留随附的 `ProxiFyreUI.exe.config`、`ProxiFyre.exe.config` 和 `NLog.config` 字节。通过 `app-config.json` 或界面编辑路由和日志详细程度。
 
-If the launcher reports **owner SID ... is not a trusted machine identity**, use the exact rejected path to distinguish a payload ownership problem from a parent-chain problem. If it reports an untrusted allow ACE, inspect its trustee and prohibited rights. Changing the owner alone does not fix an unsafe ACL. Follow the [GUI troubleshooting guide](gui.md#troubleshooting) for other payload failures.
+如果启动器报告 **owner SID ... is not a trusted machine identity**，请用被拒绝的确切路径区分负载所有权问题和父链问题。如果它报告不受信任的允许 ACE，请检查其受托者和被禁止的权利。仅更改所有者并不能修复不安全的 ACL。其他负载失败请参阅 [GUI 排错指南](gui.md#troubleshooting)。
 
-To upgrade a manual installation, stop its engine/service first, back up the live configuration, and stage the new release separately. Do not overlay a running payload. A service registered to the old directory must be removed and registered from the new directory; copying files does not update its image path. [Migration to MSI](installer.md#upgrade-repair-and-uninstall) has separate instructions.
+要升级手动安装，请先停止其引擎/服务，备份活动配置，再单独暂存新版本。不要覆盖正在运行的负载。注册到旧目录的服务必须删除并从新目录重新注册；复制文件不会更新其映像路径。[迁移到 MSI](installer.md#upgrade-repair-and-uninstall)有单独的说明。
 
-## Recipe validation
+## 流程验证
 
-Maintainers can run `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Test-ZipStaging.ps1` from an elevated individual administrator account after building Release x64; SYSTEM is not supported for this test. It executes the exact fenced script above in fresh Windows PowerShell 5.1 processes against a ZIP assembled from the built payload. It checks trusted ownership and the existing managed service/UI integrity policies, rejects a user-owned file and a user-writable directory, and verifies that a wrong checksum or existing destination cannot overwrite files. A duplicate-entry archive tests failed-extraction cleanup. A deterministic concurrent-creation case verifies that another run's directory is preserved even when its ACL matches the intended descriptor. The test validates ancestors before creating its fixtures and rejects an unsafe fixture parent before writing any executable files there.
+维护者可以在构建 Release x64 后，从提权的单个管理员账户运行 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\Test-ZipStaging.ps1`；该测试不支持 SYSTEM。它在全新的 Windows PowerShell 5.1 进程中，对根据已构建负载组装的 ZIP 执行上面这个精确受防护的脚本。它检查受信任所有权和现有的托管服务/界面完整性策略，拒绝用户所有的文件和用户可写的目录，并验证错误的校验和或已存在的目标目录不会覆盖文件。重复条目归档测试验证解压失败后的清理。确定性的并发创建用例验证另一个运行的目录即使其 ACL 与预期描述符匹配也会被保留。该测试在创建其夹具之前验证祖先，并在写入任何可执行文件之前拒绝不安全的夹具父目录。
 
-An inert-file probe creates user-owned files and directories with the staged directory's inherited DACL, then attempts actual content writes, child creation, and DACL changes while impersonating the same user with Administrators disabled and privileges removed. This deterministically checks protection before trusted ownership is assigned; it does not attempt a concurrent extraction race. The test uses temporary dedicated directories beneath Program Files, removes only those test directories, and does not register/start a service or install a driver. Native GUI startup and prerequisite installation remain manual integration checks.
+惰性文件探针会创建带暂存目录继承 DACL 的用户所有文件和目录，然后在模拟同一用户、禁用 Administrators 并移除特权的情况下，尝试实际内容写入、子项创建和 DACL 更改。这在可信所有权被分配之前确定性地检查保护；它不尝试并发解压竞争。该测试使用 Program Files 下的临时专用目录，只删除这些测试目录，并且不注册/启动服务或安装驱动程序。原生界面启动和前置依赖安装仍是手动集成检查。
