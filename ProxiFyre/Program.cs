@@ -361,7 +361,7 @@ namespace ProxiFyre
     internal class Program
     {
         internal const string LimitedModeWarning =
-            "警告：ProxiFyre 正在以显式启用的非管理员模式运行。" +
+            "警告：ProxiFyre 正在以普通模式启用非管理员模式运行。" +
             "驱动程序访问和进程归属均尽力而为。无法解析所有者的流量" +
             "（可能包括受保护、已提权、系统或其他用户的流量）将保持直连。" +
             "此模式不是严格的当前用户安全边界，不得用于完整的" +

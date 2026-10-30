@@ -166,7 +166,7 @@ if (-not (Test-Path -LiteralPath $enginePath -PathType Leaf)) {
 $engineBytes = [IO.File]::ReadAllBytes($enginePath)
 Assert-PeContainsString $engineBytes '--allow-not-admin' 'The built engine'
 Assert-PeContainsString $engineBytes `
-    '显式启用的非管理员模式' `
+    '普通模式启用非管理员模式' `
     'The built engine safety warning'
 
 if ($RunCommandLineSmokeTest) {
